@@ -72,15 +72,15 @@ public:
   ObservationMiscSstIntegral(Config &config);
  ~ObservationMiscSstIntegral() {}
 
-  void setInterval(const Time &timeStart, const Time &timeEnd) override;
+  Bool setInterval(const Time &timeStart, const Time &timeEnd) override;
   UInt parameterCount()          const override {return countAParameter;}
   UInt gravityParameterCount()   const override {return gravityCount;}
   UInt rightSideCount()          const override {return rhs.size();}
   UInt arcCount()                const override {return countArc;}
   void parameterName(std::vector<ParameterName> &name) const override;
 
-  Arc computeArc(UInt arcNo, CovarianceSstPtr covSst=CovarianceSstPtr(nullptr),
-                 CovariancePodPtr covPod1=CovariancePodPtr(nullptr), CovariancePodPtr covPod2=CovariancePodPtr(nullptr),
+  Arc computeArc(UInt arcNo, CovarianceSstPtr covSst,
+                 CovariancePodPtr covPod1, CovariancePodPtr covPod2,
                  const std::vector<Rotary3d> &rotSat1={}, const std::vector<Rotary3d> &rotSat2={}) override;
 };
 

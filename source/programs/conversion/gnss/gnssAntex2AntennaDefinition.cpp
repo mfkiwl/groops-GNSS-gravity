@@ -14,7 +14,7 @@
 // Latex documentation
 #define DOCSTRING docstring
 static const char *docstring = R"(
-Converts metadata and antenna definitions from the \href{https://kb.igs.org/hc/en-us/articles/216104678-ANTEX-format-description}{IGS ANTEX format}.
+Converts metadata and antenna definitions from the \href{https://files.igs.org/pub/data/format/antex14.txt}{IGS ANTEX format}.
 to \configFile{transmitterInfo}{gnssStationInfo}, \configFile{antennaDefinition}{gnssAntennaDefinition}, \configFile{svnBlockTable}{stringTable},
 and \configFile{transmitterList}{stringList} files for the respective GNSS and for the list of ground station antennas.
 )";
@@ -44,14 +44,14 @@ class GnssAntex2AntennaDefinition
   };
 
 public:
-  void run(Config &config);
+  void run(Config &config, Parallel::CommunicatorPtr comm);
 };
 
 GROOPS_REGISTER_PROGRAM(GnssAntex2AntennaDefinition, SINGLEPROCESS, "Converts IGS ANTEX file to GNSS metadata and antenna definition files.", Conversion, Gnss)
 
 /***********************************************/
 
-void GnssAntex2AntennaDefinition::run(Config &config)
+void GnssAntex2AntennaDefinition::run(Config &config, Parallel::CommunicatorPtr /*comm*/)
 {
   try
   {

@@ -13,11 +13,32 @@ computing environments for resource intensive tasks.
 For an easy and intuitive setup of complex workflows, GROOPS contains a graphical
 user interface where configuration files can be created and edited.
 
+- [Citing GROOPS](#citing-groops)
 - [Installation](#installation)
 - [Getting Started](#getting-started)
 - [Releases and Contributing](#releases-and-contributing)
 - [License](#license)
 - [Contributors](#contributors)
+
+## Citing GROOPS
+
+If you use data sets computed with GROOPS in a publication or publish the data itself, please cite our reference paper.
+A [preprint](https://doi.org/10.1002/essoar.10505041.1) is available on the ESSOAr, which can be cited as:
+
+*Mayer-Gürr, T., Behzadpour, S., Eicker, A., Ellmer, M., Koch, B., Krauss, S., Pock, C., Rieser, D., Strasser, S., Suesser-Rechberger, B., Zehentner, N.,  Kvas, A. (2020). GROOPS: A software toolkit for gravity field recovery and GNSS processing. Earth and Space Science Open Archive, 8. https://doi.org/10.1002/essoar.10505041.1*
+
+```
+@article{10.1002/essoar.10505041.1,
+  author = {Mayer-Gürr, Torsten and Behzadpour, Saniya and Eicker, Annette and Ellmer, Matthias and Koch, Beate and
+  Krauss, Sandro and Pock, Christian and Rieser, Daniel and Strasser, Sebastian and Suesser-Rechberger, Barbara and
+  Zehentner, Norbert and Kvas, Andreas},
+  title = {{GROOPS}: A software toolkit for gravity field recovery and {GNSS} processing},
+  journal = {Earth and Space Science Open Archive},
+  pages = {8},
+  year = {2020},
+  DOI = {10.1002/essoar.10505041.1}
+}
+```
 
 ## Installation
 
@@ -34,8 +55,9 @@ on the [Installation page](https://github.com/groops-devs/groops/blob/main/INSTA
 After a successful installation our [Documentation](https://groops-devs.github.io/groops/html/index.html)
 is the perfect way to get familiar with the different features of GROOPS.
 
-GROOPS depends on a few data files such as Earth rotation, Love numbers, and wavelet coefficients.
-You can download an initial set that is regularly updated from [our FTP server](https://ftp.tugraz.at/outgoing/ITSG/groops/data/).
+GROOPS depends on data files such as Earth rotation, Love numbers, and wavelet coefficients.
+An initial data set that is regularly updated is available on [our FTP server](https://ftp.tugraz.at/outgoing/ITSG/groops/).
+You can choose between downloading the data directory or a single [zip file](https://ftp.tugraz.at/outgoing/ITSG/groops/data.zip) with the same content.
 
 ## Releases and Contributing
 
@@ -69,5 +91,5 @@ Since 2010 it is developed and maintained at Graz University of Technology, Aust
 Here is a list of current and past contributors:
 
 [Torsten Mayer-Guerr](https://github.com/tmayerguerr), Annette Eicker, Daniel Rieser, Norbert Zehentner,
-Christian Pock, Matthias Ellmer, Beate Koch, [Andreas Kvas](https://github.com/akvas), Saniya Behzadpour,
+Christian Pock, [Matthias Ellmer](https://github.com/x49), Beate Koch, [Andreas Kvas](https://github.com/akvas), Saniya Behzadpour,
 [Sebastian Strasser](https://github.com/sestras), Sandro Krauss, Barbara Suesser-Rechberger

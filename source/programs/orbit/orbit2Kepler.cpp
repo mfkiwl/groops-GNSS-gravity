@@ -42,14 +42,14 @@ with the Keplerian elements at each epoch in the following order
 class Orbit2Kepler
 {
 public:
-  void run(Config &config);
+  void run(Config &config, Parallel::CommunicatorPtr comm);
 };
 
 GROOPS_REGISTER_PROGRAM(Orbit2Kepler, PARALLEL, "keplerian elements from orbit position and velocity at each epoch", Orbit, Instrument, TimeSeries)
 
 /***********************************************/
 
-void Orbit2Kepler::run(Config &config)
+void Orbit2Kepler::run(Config &config, Parallel::CommunicatorPtr comm)
 {
   try
   {
@@ -89,12 +89,12 @@ void Orbit2Kepler::run(Config &config)
         const Kepler kepler(orbit.at(i).time, orbit.at(i).position, orbit.at(i).velocity, GM);
         const Double M = (orbit.at(i).time-kepler.tau).seconds() * std::sqrt(GM/std::pow(kepler.a,3));
 
-        A(i, 1) = std::fmod(kepler.Omega+2*PI, 2*PI) * DEG2RAD;
-        A(i, 2) = kepler.i * DEG2RAD;
-        A(i, 3) = std::fmod(kepler.omega+2*PI, 2*PI) * DEG2RAD;
+        A(i, 1) = std::fmod(kepler.Omega+2*PI, 2*PI) * RAD2DEG;
+        A(i, 2) = kepler.i * RAD2DEG;
+        A(i, 3) = std::fmod(kepler.omega+2*PI, 2*PI) * RAD2DEG;
         A(i, 4) = kepler.a;
         A(i, 5) = kepler.e;
-        A(i, 6) = std::fmod(M+2*PI, 2*PI) * DEG2RAD;
+        A(i, 6) = std::fmod(M+2*PI, 2*PI) * RAD2DEG;
         A(i, 7) = kepler.tau.mjd();
       }
 
@@ -109,11 +109,11 @@ void Orbit2Kepler::run(Config &config)
       }
 
       return Arc(orbit.times(), A);
-    });
+    }, comm);
 
     // write results
     // -------------
-    if(Parallel::isMaster())
+    if(Parallel::isMaster(comm))
     {
       logStatus<<"write time series of Keplerian elements to file <"<<fileNameOut<<">"<<Log::endl;
       InstrumentFile::write(fileNameOut, arcList);

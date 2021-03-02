@@ -12,11 +12,11 @@
 // Latex documentation
 #define DOCSTRING docstring
 static const char *docstring = R"(
-Converts \href{ftp://ftp.igs.org/pub/data/format/rinex304.pdf}{RINEX} or
+Converts \href{https://files.igs.org/pub/data/format/rinex305.pdf}{RINEX} or
 \href{http://terras.gsi.go.jp/ja/crx2rnx.html}{Compact RINEX} files to
 \file{GnssReceiver Instrument file}{instrument}.
 
-In case of \href{ftp://igs.org/pub/data/format/rinex211.txt}{RINEX v2.x} observation files
+In case of \href{https://files.igs.org/pub/data/format/rinex211.txt}{RINEX v2.x} observation files
 containing GLONASS satellites, a mapping from PRN
 to frequency number must be provided via \config{inputfileMatrixPrn2FrequencyNumber}
 in the form of a \file{matrix file}{matrix} with columns: GLONASS PRN, mjdStart, mjdEnd, frequencyNumber.
@@ -101,14 +101,14 @@ class RinexObservation2GnssReceiver
   static Bool isGpsAntiSpoofingEnabled(const Time &time);
 
 public:
-  void run(Config &config);
+  void run(Config &config, Parallel::CommunicatorPtr comm);
 };
 
 GROOPS_REGISTER_PROGRAM(RinexObservation2GnssReceiver, SINGLEPROCESS, "Converts RINEX or Compact RINEX files to GROOPS GnssReceiver Instrument file.", Conversion, Gnss, Instrument)
 
 /***********************************************/
 
-void RinexObservation2GnssReceiver::run(Config &config)
+void RinexObservation2GnssReceiver::run(Config &config, Parallel::CommunicatorPtr /*comm*/)
 {
   try
   {

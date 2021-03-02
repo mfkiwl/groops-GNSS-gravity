@@ -14,7 +14,7 @@
 #define DOCSTRING docstring
 static const char *docstring =
 R"(
-This program converts clocks from the \href{ftp://igs.org/pub/data/format/rinex_clock304.txt}{IGS clock RINEX format},
+This program converts clocks from the \href{https://files.igs.org/pub/data/format/rinex_clock304.txt}{IGS clock RINEX format},
 which contains the clocks of all satellites and stations in a single file,
 into an \file{instrument file (MISCVALUE)}{instrument} for each \config{identifier}
 (satellite and/or station).
@@ -37,7 +37,7 @@ class GnssClockRinex2InstrumentClock
   void readFile(const FileName &fileName, std::vector<std::string> identifier, std::vector<std::vector<Time>> &times, std::vector<std::vector<Double>> &clock) const;
 
 public:
-  void run(Config &config);
+  void run(Config &config, Parallel::CommunicatorPtr comm);
 };
 
 GROOPS_REGISTER_PROGRAM(GnssClockRinex2InstrumentClock, SINGLEPROCESS, "Convert GNSS clock RINEX files to single value instrument files for satellites or stations.", Conversion, Gnss, Instrument)
@@ -45,7 +45,7 @@ GROOPS_RENAMED_PROGRAM(Igs2InstrumentClock, GnssClockRinex2InstrumentClock, date
 
 /***********************************************/
 
-void GnssClockRinex2InstrumentClock::run(Config &config)
+void GnssClockRinex2InstrumentClock::run(Config &config, Parallel::CommunicatorPtr /*comm*/)
 {
   try
   {
@@ -152,7 +152,7 @@ void GnssClockRinex2InstrumentClock::readFile(const FileName &fileName, std::vec
 
     // read data
     // ---------
-    UInt v3Offset = (fileVersion >= 3. ? 5 : 0);
+    UInt v3Offset = (fileVersion >= 3.04 ? 5 : 0);
     while(std::getline(file, line))
     {
       std::string lineID = line.substr(0,7+v3Offset);

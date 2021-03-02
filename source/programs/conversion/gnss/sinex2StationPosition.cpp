@@ -49,7 +49,7 @@ class Sinex2StationPosition
     Vector3d position;
     Vector3d velocity;
 
-    bool operator<(const Interval &other) { return timeStart < other.timeStart; }
+    Bool operator<(const Interval &other) const { return timeStart < other.timeStart; }
   };
 
   class Station
@@ -62,7 +62,7 @@ class Sinex2StationPosition
   };
 
 public:
-  void run(Config &config);
+  void run(Config &config, Parallel::CommunicatorPtr comm);
 };
 
 GROOPS_REGISTER_PROGRAM(Sinex2StationPosition, SINGLEPROCESS, "Convert GNSS station positions from SINEX to InstrumentVector3d.", Conversion, Gnss, Instrument)
@@ -111,7 +111,7 @@ Vector3dArc Sinex2StationPosition::Station::arc(const std::vector<Time> &times, 
 
 /***********************************************/
 
-void Sinex2StationPosition::run(Config &config)
+void Sinex2StationPosition::run(Config &config, Parallel::CommunicatorPtr /*comm*/)
 {
   try
   {

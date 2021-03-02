@@ -12,7 +12,7 @@
 // Latex documentation
 #define DOCSTRING docstring
 static const char *docstring = R"(
-Evaluates orbit and clock parameters from \href{ftp://ftp.igs.org/pub/data/format/rinex304.pdf}{RINEX navigation file} \config{inputfileRinex}
+Evaluates orbit and clock parameters from \href{https://files.igs.org/pub/data/format/rinex305.pdf}{RINEX navigation file} \config{inputfileRinex}
 at epochs given by \configClass{timeSeries}{timeSeriesType} and writes them to \configFile{outputfileOrbit}{instrument} and
 \configFile{outputfileClock}{instrument}, respectively.
 )";
@@ -52,14 +52,14 @@ class GnssRinexNavigation2OrbitClock
   Bool testLabel(const std::string &labelInLine, const std::string &label, Bool optional=TRUE) const;
 
 public:
-  void run(Config &config);
+  void run(Config &config, Parallel::CommunicatorPtr comm);
 };
 
 GROOPS_REGISTER_PROGRAM(GnssRinexNavigation2OrbitClock, SINGLEPROCESS, "Convert RINEX navigation file (e.g. broadcast ephemeris) to orbit and clock files.", Conversion, Gnss, Instrument)
 
 /***********************************************/
 
-void GnssRinexNavigation2OrbitClock::run(Config &config)
+void GnssRinexNavigation2OrbitClock::run(Config &config, Parallel::CommunicatorPtr /*comm*/)
 {
   try
   {

@@ -12,7 +12,7 @@
 // Latex documentation
 #define DOCSTRING docstring
 static const char *docstring = R"(
-Converts GNSS signal biases from \href{ftp://igs.org/pub/data/format/sinex_bias_100.pdf}{IGS SINEX Bias format}
+Converts GNSS signal biases from \href{https://files.igs.org/pub/data/format/sinex_bias_100.pdf}{IGS SINEX Bias format}
 to \file{GnssSignalBias format}{gnssSignalBias}.
 
 Only satellite observable-specific signal biases (OSB) are supported at the moment.
@@ -44,14 +44,14 @@ class GnssSinexBias2SignalBias
   };
 
 public:
-  void run(Config &config);
+  void run(Config &config, Parallel::CommunicatorPtr comm);
 };
 
 GROOPS_REGISTER_PROGRAM(GnssSinexBias2SignalBias, SINGLEPROCESS, "Converts GNSS signal biases from SINEX Bias format to GnssSignalBias format.", Conversion, Gnss)
 
 /***********************************************/
 
-void GnssSinexBias2SignalBias::run(Config &config)
+void GnssSinexBias2SignalBias::run(Config &config, Parallel::CommunicatorPtr /*comm*/)
 {
   try
   {

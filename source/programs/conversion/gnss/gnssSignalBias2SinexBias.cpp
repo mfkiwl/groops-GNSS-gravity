@@ -12,7 +12,7 @@
 // Latex documentation
 #define DOCSTRING docstring
 static const char *docstring = R"(
-Convert \file{GNSS signal biases}{gnssSignalBias} from GROOPS format to \href{ftp://igs.org/pub/data/format/sinex_bias_100.pdf}{IGS SINEX Bias format}.
+Convert \file{GNSS signal biases}{gnssSignalBias} from GROOPS format to \href{https://files.igs.org/pub/data/format/sinex_bias_100.pdf}{IGS SINEX Bias format}.
 Biases can be provided via \config{transmitterBiases} and/or \config{receiverBiases}.
 Phase biases without attribute (e.g. \verb|L1*|) are automatically expanded so each code
 bias has a corresponding phase bias
@@ -80,7 +80,7 @@ private:
   UInt countBiases(const std::vector<Data> &data) const;
 
 public:
-  void run(Config &config);
+  void run(Config &config, Parallel::CommunicatorPtr comm);
 };
 
 GROOPS_REGISTER_PROGRAM(GnssSignalBias2SinexBias, SINGLEPROCESS, "Convert GNSS signal biases from GROOPS format to IGS SINEX Bias format.", Conversion, Gnss)
@@ -122,9 +122,16 @@ void GnssSignalBias2SinexBias::readData(std::vector<Data> &data) const
       try
       {
         readFileGnssSignalBias(iter->inNameBias, iter->biases);
+
+        // replace unknown attributes with X (code) or * (phase)
         for(auto &type : iter->biases.type)
-          if(type == (GnssType::GALILEO + GnssType::UNKNOWN_ATTRIBUTE))
-            type = (type & ~GnssType::ATTRIBUTE) + GnssType::X;
+          if((type.type & GnssType::ATTRIBUTE.type) == GnssType::UNKNOWN_ATTRIBUTE.type)
+          {
+            type = (type & ~GnssType::ATTRIBUTE);
+            if(type == GnssType::RANGE)
+              type += GnssType::X;
+          }
+
         for(auto &&bias : iter->timeVariableBiases)
         {
           try
@@ -204,6 +211,8 @@ void GnssSignalBias2SinexBias::writeData(OutFile &file, const Time &timeStart, c
       // GLONASS station bias per satellite
       if(isStation && type == GnssType::GLONASS && type.frequencyNumber() != 9999)
       {
+        if(freqNo2prns.find(type.frequencyNumber()) == freqNo2prns.end())
+          return;
         for(const auto &prn : freqNo2prns.at(type.frequencyNumber()))
           writeLine(file, timeStart, timeEnd, prn, getSvn(prn), stationName, type, "ns", bias/LIGHT_VELOCITY*1e9, 0, biasSlope/LIGHT_VELOCITY*1e9, 0);
         return;
@@ -220,6 +229,8 @@ void GnssSignalBias2SinexBias::writeData(OutFile &file, const Time &timeStart, c
           // GLONASS station bias per satellite
           if(isStation && type == GnssType::GLONASS && type.frequencyNumber() != 9999)
           {
+            if(freqNo2prns.find(type.frequencyNumber()) == freqNo2prns.end())
+              continue;
             for(const auto &prn : freqNo2prns.at(type.frequencyNumber()))
               writeLine(file, timeStart, timeEnd, prn, getSvn(prn), stationName, (type2 & ~GnssType::TYPE) + GnssType::PHASE,
                         "ns", bias/LIGHT_VELOCITY*1e9, 0, biasSlope/LIGHT_VELOCITY*1e9, 0);
@@ -308,7 +319,7 @@ UInt GnssSignalBias2SinexBias::countBiases(const std::vector<Data> &data) const
 
 /***********************************************/
 
-void GnssSignalBias2SinexBias::run(Config &config)
+void GnssSignalBias2SinexBias::run(Config &config, Parallel::CommunicatorPtr /*comm*/)
 {
   try
   {

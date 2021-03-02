@@ -225,7 +225,6 @@ void GnssParametrizationTransmitter::initIntervalTransmitter(Gnss::AnalysisType 
     for(auto &trans : transmitter)
     {
       trans->useAtAll = TRUE;
-      trans->use.clear();
       trans->use.resize(times.size(), TRUE);
       trans->signalBias = GnssSignalBias();
       trans->biasModel.clear();
@@ -233,8 +232,6 @@ void GnssParametrizationTransmitter::initIntervalTransmitter(Gnss::AnalysisType 
 
     VariableList fileNameVariableList;
     addVariable("prn", fileNameVariableList);
-    addTimeVariables(fileNameVariableList);
-    evaluateTimeVariables(0, times.at(0), times.back(), fileNameVariableList);
 
     // ===========================================================
 
@@ -548,7 +545,7 @@ void GnssParametrizationTransmitter::initIntervalTransmitter(Gnss::AnalysisType 
     // -----------------------------
     if(clockModel)
     {
-      clockModel->setInterval(times.front(), times.back()+medianSampling(times), TRUE);
+      clockModel->setInterval(times.front(), times.back(), TRUE);
       // move reference clocks to clock0
       for(auto &trans : transmitter)
         if(trans->useable())
@@ -568,7 +565,7 @@ void GnssParametrizationTransmitter::initIntervalTransmitter(Gnss::AnalysisType 
       model.x    = Vector(model.temporal->parameterCount());
       model.bias = Vector(times.size());
       model.indexParameter = Gnss::ParameterIndex();
-      model.temporal->setInterval(times.front(), times.back()+medianSampling(times), TRUE);
+      model.temporal->setInterval(times.front(), times.back(), TRUE);
     }
   }
   catch(std::exception &e)
@@ -633,8 +630,6 @@ void GnssParametrizationTransmitter::initIntervalLate(Gnss::AnalysisType /*analy
   {
     VariableList fileNameVariableList;
     addVariable("prn", fileNameVariableList);
-    addTimeVariables(fileNameVariableList);
-    evaluateTimeVariables(0, times.at(0), times.back(), fileNameVariableList);
 
     for(auto &trans : transmitter)
       if(trans->useable())
@@ -707,6 +702,16 @@ void GnssParametrizationTransmitter::initParameter(Gnss::NormalEquationInfo &nor
             // clock
             if((estimateClockError != EstimateClockError::NONE) && (normalEquationInfo.estimationType & Gnss::NormalEquationInfo::ESTIMATE_TRANSMITTER_CLOCK))
             {
+              // check if clock parameter is estimable with currently selected receivers
+              UInt count = 0;
+              for(UInt idRecv = 0; idRecv < gnss().receiver.size(); idRecv++)
+                if(gnss().receiver.at(idRecv)->useable() && normalEquationInfo.estimateReceiver.at(idRecv))
+                  count += gnss().receiver.at(idRecv)->countObservations(trans->idTrans(), idEpoch, idEpoch);
+              Parallel::reduceSum(count, 0, normalEquationInfo.comm);
+              Parallel::broadCast(count, 0, normalEquationInfo.comm);
+              if(!count)
+                continue;
+
               trans->indexParameterClock.at(idEpoch) = normalEquationInfo.parameterNamesEpochTransmitter(idEpoch, trans->idTrans(), {ParameterName(trans->name(), "clock", "", times.at(idEpoch))});
             }
           }
@@ -1321,8 +1326,6 @@ void GnssParametrizationTransmitter::writeResults(const Gnss::NormalEquationInfo
 
     VariableList fileNameVariableList;
     addVariable("prn", fileNameVariableList);
-    addTimeVariables(fileNameVariableList);
-    evaluateTimeVariables(0, times.at(0), times.back(), fileNameVariableList);
 
     // write used transmitter list
     // ---------------------------

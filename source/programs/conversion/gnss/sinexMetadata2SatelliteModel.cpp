@@ -14,7 +14,7 @@
 // Latex documentation
 #define DOCSTRING docstring
 static const char *docstring = R"(
-Create \configFile{outputfileSatelliteModel}{satelliteModel} from \href{http://mgex.igs.org/IGS_MGEX_Metadata.php}{IGS SINEX metadata format}.
+Create \configFile{outputfileSatelliteModel}{satelliteModel} from \href{https://www.igs.org/mgex/metadata/#metadata}{IGS SINEX metadata format}.
 
 If \configFile{inputfileSatelliteModel}{satelliteModel} is provided it is used as a basis and values are updated from the metadata file.
 
@@ -35,14 +35,14 @@ See also \program{SatelliteModelCreate}.
 class SinexMetadata2SatelliteModel
 {
 public:
-  void run(Config &config);
+  void run(Config &config, Parallel::CommunicatorPtr comm);
 };
 
 GROOPS_REGISTER_PROGRAM(SinexMetadata2SatelliteModel, SINGLEPROCESS, "Create satellite model from IGS SINEX metadata file.", Conversion, Gnss)
 
 /***********************************************/
 
-void SinexMetadata2SatelliteModel::run(Config &config)
+void SinexMetadata2SatelliteModel::run(Config &config, Parallel::CommunicatorPtr /*comm*/)
 {
   try
   {

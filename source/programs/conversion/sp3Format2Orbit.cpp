@@ -5,6 +5,7 @@
 * @brief Read IGS orbits from SP3 format.
 *
 * @author Torsten Mayer-Guerr
+* @author Sebastian Strasser
 * @date 2019-10-25
 *
 */
@@ -13,7 +14,7 @@
 // Latex documentation
 #define DOCSTRING docstring
 static const char *docstring = R"(
-Read IGS orbits from \href{ftp://igs.org/pub/data/format/sp3c.txt}{SP3 format}
+Read IGS orbits from \href{https://files.igs.org/pub/data/format/sp3d.pdf}{SP3 format}
 and write an \file{instrument file (ORBIT)}{instrument}.
 The additional \config{outputfileClock} is an \file{instrument file (MISCVALUE)}{instrument}
 and \config{outputfileCovariance} is an \file{instrument file (COVARIANCE3D)}{instrument}.
@@ -39,7 +40,7 @@ See also \program{Orbit2Sp3Format}.
 class Sp3Format2Orbit
 {
 public:
-  void run(Config &config);
+  void run(Config &config, Parallel::CommunicatorPtr comm);
 };
 
 GROOPS_REGISTER_PROGRAM(Sp3Format2Orbit, SINGLEPROCESS, "read IGS orbits from SP3 format", Conversion, Orbit, Covariance, Instrument)
@@ -48,7 +49,7 @@ GROOPS_RENAMED_PROGRAM(Igs2Orbit,     Sp3Format2Orbit, date2time(2020, 8, 4))
 
 /***********************************************/
 
-void Sp3Format2Orbit::run(Config &config)
+void Sp3Format2Orbit::run(Config &config, Parallel::CommunicatorPtr /*comm*/)
 {
   try
   {
@@ -76,51 +77,41 @@ void Sp3Format2Orbit::run(Config &config)
       {
         logStatus<<"read file <"<<filenameIn<<">"<<Log::endl;
         InFile file(filenameIn);
-
-        // read header
-        // -----------
-        std::string line;           //                  0123456789|123456789|123456789|123456789|123456789|123456789
-        std::getline(file, line);   // SP3 Line 01      #cV2018 12 24 13 51  0.00000000   14307 ORBIT ITRF  FIT CNES
-        std::getline(file, line);   // SP3 Line 02      ## 2033 136260.00000000    60.00000000 58476 0.5770833333333
-        std::getline(file, line);   // SP3 Line 03      +    1   L39  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
-        if(satId.empty())
-          satId = line.substr(9, 3);
-        std::getline(file, line);   // SP3 Line 04      +          0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
-        std::getline(file, line);   // SP3 Line 05      +          0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
-        std::getline(file, line);   // SP3 Line 06      +          0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
-        std::getline(file, line);   // SP3 Line 07      +          0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
-        std::getline(file, line);   // SP3 Line 08      ++
-        std::getline(file, line);   // SP3 Line 09      ++
-        std::getline(file, line);   // SP3 Line 10      ++         0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
-        std::getline(file, line);   // SP3 Line 11      ++         0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
-        std::getline(file, line);   // SP3 Line 12      ++         0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
-        std::getline(file, line);   // SP3 Line 13      %c L  cc TAI ccc cccc cccc cccc cccc ccccc ccccc ccccc ccccc
+        std::string line;
         enum TimeSystem {GPS, UTC, TAI};
         TimeSystem timeSystem = GPS;
-        if(line.substr(9, 3) == "GPS") timeSystem = GPS;
-        else if(line.substr(9, 3) == "UTC") timeSystem = UTC;
-        else if(line.substr(9, 3) == "TAI") timeSystem = TAI;
-        else logWarning<<"Unkonwn time system ("<<line.substr(9, 3)<<"), assuming GPS time"<<Log::endl;
-        std::getline(file, line);   // SP3 Line 14      %c cc cc ccc ccc cccc cccc cccc cccc ccccc ccccc ccccc ccccc
-        std::getline(file, line);   // SP3 Line 15      %f  1.2500000  1.025000000  0.00000000000  0.000000000000000
-        std::getline(file, line);   // SP3 Line 16      %f  0.0000000  0.000000000  0.00000000000  0.000000000000000
-        std::getline(file, line);   // SP3 Line 17      %i    0    0    0    0      0      0      0      0         0
-        std::getline(file, line);   // SP3 Line 18      %i    0    0    0    0      0      0      0      0         0
-        for(UInt i=0; i<4; i++)
-          std::getline(file, line); // SP3 Lines 19-22  /* CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
-
         Time time;
         Bool positionRecord = FALSE;
-        for(;;)
+        while(std::getline(file, line))
         {
-          std::string line;
-          std::getline(file, line);
-          std::string lineID = line.substr(0,2);
-          std::stringstream ss(line.substr(1));
+          // Header
+          // ------
+          if(String::startsWith(line, "#") ||   // first 2 lines
+             String::startsWith(line, "/*") ||  // comment lines
+             String::startsWith(line, "%f") ||  // floating point base base numbers
+             String::startsWith(line, "%i"))    // additional parameters
+            continue;
+
+          if(String::startsWith(line, "+"))     // satellite list and orbit accuracy lines
+          {
+            if(satId.empty() && String::toInt(line.substr(3, 3)) > 0)
+              satId = line.substr(9, 3);
+            continue;
+          }
+
+          if(String::startsWith(line, "%c"))    // file type and time system definition lines
+          {
+            if(line.substr(9, 3) == "GPS") timeSystem = GPS;
+            else if(line.substr(9, 3) == "UTC") timeSystem = UTC;
+            else if(line.substr(9, 3) == "TAI") timeSystem = TAI;
+            else logWarning<<"Unknown time system ("<<line.substr(9, 3)<<"), assuming GPS time"<<Log::endl;
+            std::getline(file, line); // skip second %c line
+            continue;
+          }
 
           // Epoch
           // -----
-          if(lineID=="* ")
+          if(String::startsWith(line, "* "))
           {
             UInt   year  = String::toInt(line.substr(3, 4));
             UInt   month = String::toInt(line.substr(8, 2));
@@ -138,7 +129,7 @@ void Sp3Format2Orbit::run(Config &config)
 
           // Position
           // --------
-          if(lineID.at(0)=='P')
+          if(String::startsWith(line, "P"))
           {
             if(line.substr(1,3) != satId)
               positionRecord = FALSE;
@@ -166,7 +157,7 @@ void Sp3Format2Orbit::run(Config &config)
 
           // Position covariance
           // -------------------
-          if(lineID=="EP" && positionRecord)
+          if(String::startsWith(line, "EP") && positionRecord)
           {
             Double xx = String::toDouble(line.substr(4, 4));
             Double yy = String::toDouble(line.substr(9, 4));
@@ -183,7 +174,7 @@ void Sp3Format2Orbit::run(Config &config)
 
           // Velocity
           // --------
-          if((lineID.at(0)=='V') && (line.substr(1,3) == satId) && positionRecord)
+          if(String::startsWith(line, "V") && (line.substr(1,3) == satId) && positionRecord)
           {
             Double x = String::toDouble(line.substr(4, 14));
             Double y = String::toDouble(line.substr(18, 14));
@@ -193,7 +184,7 @@ void Sp3Format2Orbit::run(Config &config)
 
           // end of file
           // -----------
-          if(lineID=="EO")
+          if(String::startsWith(line, "EOF"))
             break;
         } // for(;;)
       }
@@ -215,10 +206,8 @@ void Sp3Format2Orbit::run(Config &config)
     {
       logStatus<<"rotation from TRF to CRF"<<Log::endl;
       UInt idxCov = 0;
-      logTimerStart;
-      for(UInt i=0; i<orbit.size(); i++)
+      Single::forEach(orbit.size(), [&](UInt i)
       {
-        logTimerLoop(i, orbit.size());
         const Rotary3d rotation = inverse(earthRotation->rotaryMatrix(orbit.at(i).time));
         const Vector3d omega    = earthRotation->rotaryAxis(orbit.at(i).time);
         orbit.at(i).position = rotation.rotate(orbit.at(i).position);
@@ -231,8 +220,7 @@ void Sp3Format2Orbit::run(Config &config)
           if((idxCov < cov.size()) && (cov.at(idxCov).time == orbit.at(i).time))
             cov.at(idxCov).covariance = rotation.rotate(cov.at(idxCov).covariance);
         }
-      }
-      logTimerLoopEnd(orbit.size());
+      });
     }
 
     // ==============================

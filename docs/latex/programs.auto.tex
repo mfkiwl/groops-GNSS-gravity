@@ -550,6 +550,206 @@ Name & Type & Annotation\\
 
 \clearpage
 %==================================
+\subsection{GnssAttitudeInfoCreate}\label{GnssAttitudeInfoCreate}
+Creates attitude info file (\file{Instrument(MISCVALUES)}{instrument})
+used by \program{SimulateStarCameraGnss}. One or more \config{attitudeInfo}s can be specified.
+They are valid from \config{timeStart} until the start of the subsequent \config{attitudeInfo}.
+\config{maxManeuverTime} is used by \program{SimulateStarCameraGnss} to look
+for ongoing orbit maneuvers before/after the given orbit that might affect the attitude at
+the beginning or end of a given orbit.
+
+\fig{!hb}{0.9}{gnssAttitudeModes}{fig:gnssAttitudeModes2}{Overview of attitude modes used by GNSS satellites}
+
+Here is a list of GNSS satellite types for which the attitude behavior is known and their
+respective attitude modes and required parameters:
+\begin{itemize}
+\item \textbf{GPS-II/IIA} [1]
+\begin{itemize}
+  \item \config{defaultMode}: nominalYawSteering
+  \item \config{midnightMode}: shadowMaxYawSteeringAndRecovery
+  \item \config{noonMode}: catchUpYawSteering
+  \item \config{maxYawRate}: 0.12~deg/s
+  \item \config{yawBias}: 0.5~deg
+  \item \config{maxManeuverTime}: 2~h
+\end{itemize}
+\item \textbf{GPS-IIR/IIR-M} [1]
+\begin{itemize}
+  \item \config{defaultMode}: nominalYawSteering
+  \item \config{midnightMode}: catchUpYawSteering
+  \item \config{noonMode}: catchUpYawSteering
+  \item \config{maxYawRate}: 0.2~deg/s
+  \item \config{maxManeuverTime}: 30~min
+\end{itemize}
+\item \textbf{GPS-IIF} [2]
+\begin{itemize}
+  \item \config{defaultMode}: nominalYawSteering
+  \item \config{midnightMode}: shadowConstantYawSteering
+  \item \config{noonMode}: catchUpYawSteering
+  \item \config{maxYawRate}: 0.11~deg/s
+  \item \config{yawBias}: -0.7~deg
+  \item \config{maxManeuverTime}: 1.5~h
+\end{itemize}
+\item \textbf{GLO-M} [3]
+\begin{itemize}
+  \item \config{defaultMode}: nominalYawSteering
+  \item \config{midnightMode}: shadowMaxYawSteeringAndStop
+  \item \config{noonMode}: centeredMaxYawSteering
+  \item \config{maxYawRate}: 0.25~deg/s
+  \item \config{noonBetaThreshold}: 2~deg
+  \item \config{maxManeuverTime}: 1.5~h
+\end{itemize}
+\item \textbf{GAL-1} [4]
+\begin{itemize}
+  \item \config{defaultMode}: nominalYawSteering
+  \item \config{midnightMode}: smoothedYawSteering1
+  \item \config{noonMode}: smoothedYawSteering1
+  \item \config{maxManeuverTime}: 1.5~h
+\end{itemize}
+\item \textbf{GAL-2} [4]
+\begin{itemize}
+  \item \config{defaultMode}: nominalYawSteering
+  \item \config{midnightMode}: smoothedYawSteering2
+  \item \config{noonMode}: smoothedYawSteering2
+  \item \config{midnightBetaThreshold}: 4.1~deg
+  \item \config{noonBetaThreshold}: 4.1~deg
+  \item \config{activationThreshold}: 10~deg
+  \item \config{maxManeuverTime}: 5656~s
+\end{itemize}
+\item \textbf{BDS-2G/3G} [5, 6]
+\begin{itemize}
+  \item \config{defaultMode}: orbitNormal
+  \item \config{midnightMode}: orbitNormal
+  \item \config{noonMode}: orbitNormal
+\end{itemize}
+\item \textbf{BDS-2I} [5]
+\begin{itemize}
+  \item \config{defaultMode}: nominalYawSteering
+  \item \config{midnightMode}: betaDependentOrbitNormal
+  \item \config{noonMode}: betaDependentOrbitNormal
+  \item \config{maxYawRate}: 0.085~deg/s
+  \item \config{midnightBetaThreshold}: 4~deg
+  \item \config{noonBetaThreshold}: 4~deg
+  \item \config{activationThreshold}: 5~deg
+  \item \config{maxManeuverTime}: 24~h
+\end{itemize}
+\item \textbf{BDS-2M} [5]
+\begin{itemize}
+  \item \config{defaultMode}: nominalYawSteering
+  \item \config{midnightMode}: betaDependentOrbitNormal
+  \item \config{noonMode}: betaDependentOrbitNormal
+  \item \config{maxYawRate}: 0.159~deg/s
+  \item \config{midnightBetaThreshold}: 4~deg
+  \item \config{noonBetaThreshold}: 4~deg
+  \item \config{activationThreshold}: 5~deg
+  \item \config{maxManeuverTime}: 13~h
+\end{itemize}
+\item \textbf{BDS-3I/3SI} [6]
+\begin{itemize}
+  \item \config{defaultMode}: nominalYawSteering
+  \item \config{midnightMode}: smoothedYawSteering2
+  \item \config{noonMode}: smoothedYawSteering2
+  \item \config{midnightBetaThreshold}: 3~deg
+  \item \config{noonBetaThreshold}: 3~deg
+  \item \config{activationThreshold}: 6~deg
+  \item \config{maxManeuverTime}: 5740~s
+\end{itemize}
+\item \textbf{BDS-3M/3SM} [6]
+\begin{itemize}
+  \item \config{defaultMode}: nominalYawSteering
+  \item \config{midnightMode}: smoothedYawSteering2
+  \item \config{noonMode}: smoothedYawSteering2
+  \item \config{midnightBetaThreshold}: 3~deg
+  \item \config{noonBetaThreshold}: 3~deg
+  \item \config{activationThreshold}: 6~deg
+  \item \config{maxManeuverTime}: 3090~s
+\end{itemize}
+\item \textbf{QZS-1} [7]
+\begin{itemize}
+  \item \config{defaultMode}: nominalYawSteering
+  \item \config{midnightMode}: betaDependentOrbitNormal
+  \item \config{noonMode}: betaDependentOrbitNormal
+  \item \config{maxYawRate}: 0.01~deg/s
+  \item \config{yawBias}: 180~deg
+  \item \config{midnightBetaThreshold}: 20~deg
+  \item \config{noonBetaThreshold}: 20~deg
+  \item \config{activationThreshold}: 18.5~deg
+  \item \config{maxManeuverTime}: 24~h
+\end{itemize}
+\item \textbf{QZS-2G} [7]
+\begin{itemize}
+  \item \config{defaultMode}: orbitNormal
+  \item \config{midnightMode}: orbitNormal
+  \item \config{noonMode}: orbitNormal
+  \item \config{yawBias}: 180~deg
+\end{itemize}
+\item \textbf{QZS-2I} [7]
+\begin{itemize}
+  \item \config{defaultMode}: nominalYawSteering
+  \item \config{midnightMode}: centeredMaxYawSteering
+  \item \config{noonMode}: centeredMaxYawSteering
+  \item \config{maxYawRate}: 0.055~deg/s
+  \item \config{midnightBetaThreshold}: 5~deg
+  \item \config{noonBetaThreshold}: 5~deg
+  \item \config{maxManeuverTime}: 1.5~h
+\end{itemize}
+\end{itemize}
+
+Some specific satellites may deviate in their attitude behavior or parameters
+(e.g. G013-G040, R713, C005, C015, C017, J001).
+
+References for the attitude behavior information:
+\begin{enumerate}
+\item \href{https://doi.org/10.1007/s10291-008-0092-1}{Kouba (2009)}
+\item \href{https://doi.org/10.1007/s10291-016-0562-9}{Kuang et al. (2017)}
+\item \href{https://doi.org/10.1016/j.asr.2010.09.007}{Dilssner et al. (2011)}
+\item \url{https://www.gsc-europa.eu/support-to-developers/galileo-satellite-metadata#3}
+\item \href{https://doi.org/10.1007/s10291-018-0783-1}{Wang et al. (2018)}
+\item \href{https://doi.org/10.1017/S0373463318000103}{Li et al. (2018)}
+\item \url{https://qzss.go.jp/en/technical/qzssinfo/index.html}
+\end{enumerate}
+
+
+\keepXColumns
+\begin{tabularx}{\textwidth}{N T A}
+\hline
+Name & Type & Annotation\\
+\hline
+\hfuzz=500pt\includegraphics[width=1em]{element-mustset.pdf}~outputfileAttitudeInfo & \hfuzz=500pt filename & \hfuzz=500pt \\
+\hfuzz=500pt\includegraphics[width=1em]{element-mustset-unbounded.pdf}~attitudeInfo & \hfuzz=500pt sequence & \hfuzz=500pt \\
+\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element-mustset.pdf}~timeStart & \hfuzz=500pt time & \hfuzz=500pt \\
+\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element-mustset.pdf}~defaultMode & \hfuzz=500pt choice & \hfuzz=500pt default attitude mode\\
+\hfuzz=500pt\quad\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element-mustset.pdf}~nominalYawSteering & \hfuzz=500pt  & \hfuzz=500pt yaw to keep solar panels aligned to Sun (e.g. most GNSS satellites outside eclipse)\\
+\hfuzz=500pt\quad\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element-mustset.pdf}~orbitNormal & \hfuzz=500pt  & \hfuzz=500pt keep fixed yaw angle, for example point X-axis in flight direction (e.g. BDS-2G, BDS-3G, QZS-2G)\\
+\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element-mustset.pdf}~midnightMode & \hfuzz=500pt choice & \hfuzz=500pt attitude mode for maneuvers around orbit midnight\\
+\hfuzz=500pt\quad\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element-mustset.pdf}~nominalYawSteering & \hfuzz=500pt  & \hfuzz=500pt yaw to keep solar panels aligned to Sun (e.g. most GNSS satellites outside eclipse)\\
+\hfuzz=500pt\quad\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element-mustset.pdf}~orbitNormal & \hfuzz=500pt  & \hfuzz=500pt keep fixed yaw angle, for example point X-axis in flight direction (e.g. BDS-2G, BDS-3G, QZS-2G)\\
+\hfuzz=500pt\quad\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element-mustset.pdf}~catchUpYawSteering & \hfuzz=500pt  & \hfuzz=500pt yaw at maximum yaw rate to catch up to nominal yaw angle (e.g. GPS-* (noon), GPS-IIR (midnight))\\
+\hfuzz=500pt\quad\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element-mustset.pdf}~shadowMaxYawSteeringAndRecovery & \hfuzz=500pt  & \hfuzz=500pt yaw at maximum yaw rate from shadow start to end, recover after shadow (e.g. GPS-IIA (midnight))\\
+\hfuzz=500pt\quad\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element-mustset.pdf}~shadowMaxYawSteeringAndStop & \hfuzz=500pt  & \hfuzz=500pt yaw at maximum yaw rate from shadow start until nominal yaw angle at shadow end is reached, then stop (e.g. GLO-M (midnight))\\
+\hfuzz=500pt\quad\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element-mustset.pdf}~shadowConstantYawSteering & \hfuzz=500pt  & \hfuzz=500pt yaw at constant yaw rate from shadow start to end (e.g. GPS-IIF (midnight))\\
+\hfuzz=500pt\quad\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element-mustset.pdf}~centeredMaxYawSteering & \hfuzz=500pt  & \hfuzz=500pt yaw at maximum yaw rate centered around noon/midnight (e.g. QZS-2I, GLO-M (noon))\\
+\hfuzz=500pt\quad\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element-mustset.pdf}~smoothedYawSteering1 & \hfuzz=500pt  & \hfuzz=500pt yaw based on an auxiliary Sun vector for a smooth yaw maneuver (e.g. GAL-1)\\
+\hfuzz=500pt\quad\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element-mustset.pdf}~smoothedYawSteering2 & \hfuzz=500pt  & \hfuzz=500pt yaw based on a modified yaw-steering law for a smooth yaw maneuver (e.g. GAL-2, BDS-3M, BDS-3I)\\
+\hfuzz=500pt\quad\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element-mustset.pdf}~betaDependentOrbitNormal & \hfuzz=500pt  & \hfuzz=500pt switch to orbit normal mode if below beta angle threshold (e.g. BDS-2M, BDS-2I, QZS-1)\\
+\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element-mustset.pdf}~noonMode & \hfuzz=500pt choice & \hfuzz=500pt attitude mode for maneuvers around orbit noon\\
+\hfuzz=500pt\quad\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element-mustset.pdf}~nominalYawSteering & \hfuzz=500pt  & \hfuzz=500pt yaw to keep solar panels aligned to Sun (e.g. most GNSS satellites outside eclipse)\\
+\hfuzz=500pt\quad\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element-mustset.pdf}~orbitNormal & \hfuzz=500pt  & \hfuzz=500pt keep fixed yaw angle, for example point X-axis in flight direction (e.g. BDS-2G, BDS-3G, QZS-2G)\\
+\hfuzz=500pt\quad\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element-mustset.pdf}~catchUpYawSteering & \hfuzz=500pt  & \hfuzz=500pt yaw at maximum yaw rate to catch up to nominal yaw angle (e.g. GPS-* (noon), GPS-IIR (midnight))\\
+\hfuzz=500pt\quad\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element-mustset.pdf}~centeredMaxYawSteering & \hfuzz=500pt  & \hfuzz=500pt yaw at maximum yaw rate centered around noon/midnight (e.g. QZS-2I, GLO-M (noon))\\
+\hfuzz=500pt\quad\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element-mustset.pdf}~smoothedYawSteering1 & \hfuzz=500pt  & \hfuzz=500pt yaw based on an auxiliary Sun vector for a smooth yaw maneuver (e.g. GAL-1)\\
+\hfuzz=500pt\quad\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element-mustset.pdf}~smoothedYawSteering2 & \hfuzz=500pt  & \hfuzz=500pt yaw based on a modified yaw-steering law for a smooth yaw maneuver (e.g. GAL-2, BDS-3M, BDS-3I)\\
+\hfuzz=500pt\quad\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element-mustset.pdf}~betaDependentOrbitNormal & \hfuzz=500pt  & \hfuzz=500pt switch to orbit normal mode if below beta angle threshold (e.g. BDS-2M, BDS-2I, QZS-1)\\
+\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~maxYawRate & \hfuzz=500pt double & \hfuzz=500pt [degree/s] maximum yaw rate of the satellite\\
+\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~yawBias & \hfuzz=500pt double & \hfuzz=500pt [degree] yaw bias applied in satellite attitude control system\\
+\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~midnightBetaThreshold & \hfuzz=500pt double & \hfuzz=500pt [degree] limit midnight maneuver to this absolute angle of the Sun above/below the satellite orbital plane\\
+\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~noonBetaThreshold & \hfuzz=500pt double & \hfuzz=500pt [degree] limit noon maneuver to this absolute angle of the Sun above/below the satellite orbital plane\\
+\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~activationThreshold & \hfuzz=500pt double & \hfuzz=500pt [degree] limit maneuver to this yaw/Earth-spacecraft-Sun angle (depending on mode)\\
+\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~maxManeuverTime & \hfuzz=500pt double & \hfuzz=500pt [s] maximum duration of maneuver or maximum maneuver lookup time before/after orbit start/end\\
+\hline
+\end{tabularx}
+
+\clearpage
+%==================================
 \subsection{GnssBiasClockAlignment}\label{GnssBiasClockAlignment}
 This program can be used to absolutely align GNSS transmitter clocks to reference clocks (i.e. broadcast clocks).
 Each 'group' of \config{transmitter}s, usually a system like GPS or Galileo, is aligned individually by a constant shift over all transmitters.
@@ -640,7 +840,9 @@ Name & Type & Annotation\\
 \clearpage
 %==================================
 \subsection{GnssPrn2SvnBlockVariables}\label{GnssPrn2SvnBlockVariables}
-Create \reference{variables}{general.parser} containing SVN and block for a GNSS PRN at a specific \config{time}.
+Create \reference{variables}{general.parser} containing SVN and block based on an
+\configFile{inputfileTransmitterInfo}{gnssStationInfo} of a GNSS satellite/PRN and
+a specified \config{time}.
 
 
 \keepXColumns
@@ -680,9 +882,8 @@ The processing flow is controlled via a list of \configClass{processingSteps}{gn
 Each step is processed consecutively. Some steps allow the selection of parameters, epochs, or the normal equation structure,
 which affects all subsequent steps.
 
-If the program is run on multiple processes in \reference{parallel}{general.parallelization}, \config{parallelIntervals}=\verb|yes| distributes the
-defined \configClass{intervals}{timeSeriesType} over all processes. Otherwise the intervals are processed consecutively while the
-\configClass{receiver}{gnssParametrizationReceiverType}s (stations or LEO satellites) are distributed over the processes.
+If the program is run on multiple processes the \configClass{receiver}{gnssParametrizationReceiverType}s
+(stations or LEO satellites) are distributed over the processes.
 
 See also \program{GnssSimulateReceiver}.
 
@@ -693,9 +894,7 @@ See also \program{GnssSimulateReceiver}.
 Name & Type & Annotation\\
 \hline
 \hfuzz=500pt\includegraphics[width=1em]{element.pdf}~outputfileParameterName & \hfuzz=500pt filename & \hfuzz=500pt parameter names\\
-\hfuzz=500pt\includegraphics[width=1em]{element-unbounded.pdf}~intervals & \hfuzz=500pt \hyperref[timeSeriesType]{timeSeries} & \hfuzz=500pt each interval is processed independently\\
-\hfuzz=500pt\includegraphics[width=1em]{element.pdf}~parallelIntervals & \hfuzz=500pt boolean & \hfuzz=500pt parallelize intervals instead of receivers per interval\\
-\hfuzz=500pt\includegraphics[width=1em]{element-mustset-unbounded.pdf}~timeSeries & \hfuzz=500pt \hyperref[timeSeriesType]{timeSeries} & \hfuzz=500pt defines epochs within intervals\\
+\hfuzz=500pt\includegraphics[width=1em]{element-mustset-unbounded.pdf}~timeSeries & \hfuzz=500pt \hyperref[timeSeriesType]{timeSeries} & \hfuzz=500pt defines observation epochs\\
 \hfuzz=500pt\includegraphics[width=1em]{element.pdf}~timeMargin & \hfuzz=500pt double & \hfuzz=500pt [seconds] margin to consider two times identical\\
 \hfuzz=500pt\includegraphics[width=1em]{element-mustset-unbounded.pdf}~transmitter & \hfuzz=500pt \hyperref[gnssParametrizationTransmitterType]{gnssParametrizationTransmitter} & \hfuzz=500pt constellation of GNSS satellites\\
 \hfuzz=500pt\includegraphics[width=1em]{element-mustset-unbounded.pdf}~receiver & \hfuzz=500pt \hyperref[gnssParametrizationReceiverType]{gnssParametrizationReceiver} & \hfuzz=500pt ground station network or LEO satellite\\
@@ -862,9 +1061,8 @@ via \configClass{noiseObervation}{noiseGeneratorType} and \configClass{noiseCloc
 interpreted as a factor that is multiplied to the accuracy derived from the accuracy pattern of the respective observation type
 (see \configFile{inputfileAccuracyDefinition}{gnssAntennaDefinition} in \configClass{receiver}{gnssParametrizationReceiverType}).
 
-If the program is run on multiple processes in \reference{parallel}{general.parallelization}, \config{parallelIntervals}=\verb|yes| distributes the
-defined \configClass{intervals}{timeSeriesType} over all processes. Otherwise the intervals are processed consecutively while the
-\configClass{receiver}{gnssParametrizationReceiverType}s (stations or LEO satellites) are distributed over the processes.
+If the program is run on multiple processes the \configClass{receiver}{gnssParametrizationReceiverType}s
+(stations or LEO satellites) are distributed over the processes.
 
 
 \keepXColumns
@@ -874,7 +1072,6 @@ Name & Type & Annotation\\
 \hline
 \hfuzz=500pt\includegraphics[width=1em]{element-mustset.pdf}~outputfileGnssReceiver & \hfuzz=500pt filename & \hfuzz=500pt simulated observations\\
 \hfuzz=500pt\includegraphics[width=1em]{element.pdf}~outputfileClock & \hfuzz=500pt filename & \hfuzz=500pt simulated receiver clock errors\\
-\hfuzz=500pt\includegraphics[width=1em]{element-unbounded.pdf}~intervals & \hfuzz=500pt \hyperref[timeSeriesType]{timeSeries} & \hfuzz=500pt each interval is processed independently\\
 \hfuzz=500pt\includegraphics[width=1em]{element-mustset-unbounded.pdf}~timeSeries & \hfuzz=500pt \hyperref[timeSeriesType]{timeSeries} & \hfuzz=500pt defines epochs within intervals\\
 \hfuzz=500pt\includegraphics[width=1em]{element.pdf}~timeMargin & \hfuzz=500pt double & \hfuzz=500pt [seconds] margin to consider two times identical\\
 \hfuzz=500pt\includegraphics[width=1em]{element-mustset-unbounded.pdf}~transmitter & \hfuzz=500pt \hyperref[gnssParametrizationTransmitterType]{gnssParametrizationTransmitter} & \hfuzz=500pt constellation of GNSS satellites\\
@@ -884,7 +1081,6 @@ Name & Type & Annotation\\
 \hfuzz=500pt\includegraphics[width=1em]{element-mustset-unbounded.pdf}~observationType & \hfuzz=500pt \hyperref[gnssType]{gnssType} & \hfuzz=500pt simulated observation types\\
 \hfuzz=500pt\includegraphics[width=1em]{element-unbounded.pdf}~noiseObservation & \hfuzz=500pt \hyperref[noiseGeneratorType]{noiseGenerator} & \hfuzz=500pt [-] noise is multplied with type accuracy pattern of receiver\\
 \hfuzz=500pt\includegraphics[width=1em]{element-unbounded.pdf}~noiseClockReceiver & \hfuzz=500pt \hyperref[noiseGeneratorType]{noiseGenerator} & \hfuzz=500pt [m] noise added to the simulated receiver clock\\
-\hfuzz=500pt\includegraphics[width=1em]{element.pdf}~parallelIntervals & \hfuzz=500pt boolean & \hfuzz=500pt parallelize intervals instead of receivers per interval\\
 \hline
 \end{tabularx}
 
@@ -2343,7 +2539,6 @@ Name & Type & Annotation\\
 \hline
 \end{tabularx}
 
-This program is \reference{parallelized}{general.parallelization}.
 \clearpage
 %==================================
 \subsection{GriddedDataReduceSampling}\label{GriddedDataReduceSampling}
@@ -2366,7 +2561,6 @@ Name & Type & Annotation\\
 \hline
 \end{tabularx}
 
-This program is \reference{parallelized}{general.parallelization}.
 \clearpage
 %==================================
 \subsection{GriddedTopography2AtmospherePotentialCoefficients}\label{GriddedTopography2AtmospherePotentialCoefficients}
@@ -2447,7 +2641,6 @@ Name & Type & Annotation\\
 \hline
 \end{tabularx}
 
-This program is \reference{parallelized}{general.parallelization}.
 \clearpage
 %==================================
 \subsection{Matrix2GriddedData}\label{Matrix2GriddedData}
@@ -3102,6 +3295,7 @@ Name & Type & Annotation\\
 \hline
 \end{tabularx}
 
+This program is \reference{parallelized}{general.parallelization}.
 \clearpage
 %==================================
 \subsection{InstrumentDetrend}\label{InstrumentDetrend}
@@ -3263,6 +3457,7 @@ Name & Type & Annotation\\
 \hline
 \end{tabularx}
 
+This program is \reference{parallelized}{general.parallelization}.
 \clearpage
 %==================================
 \subsection{InstrumentMultiplyAdd}\label{InstrumentMultiplyAdd}
@@ -3844,131 +4039,6 @@ Name & Type & Annotation\\
 This program is \reference{parallelized}{general.parallelization}.
 \clearpage
 %==================================
-\subsection{KalmanStaticTemporalNormals}\label{KalmanStaticTemporalNormals}
-This program sets up normal equations based on \configClass{observation}{observationType} for static gravity,
-(possibly) multiple long-term \config{temporal} representations and co-estimated high-frequency variations.
-It computes the normal equations based on the intervals $i \in \{1, ..., N\}$ given in the \configFile{arcList}{arcList}.
-This corresponds to the least-squares adjustment
-\begin{equation}
-  \label{eq:temporal-least-squares}
-  \begin{bmatrix}
-    \mathbf{l}_1 \\
-    \mathbf{l}_2 \\
-    \vdots \\
-    \mathbf{l}_N \\
-  \end{bmatrix}
-  =
-  \begin{bmatrix}
-    \Phi^{(0)}_1 \mathbf{A}_1  & \Phi^{(1)}_1 \mathbf{A}_1 & \cdots & \Phi^{(m)}_1 \mathbf{A}_1 \\
-    \Phi^{(0)}_2 \mathbf{A}_2  & \Phi^{(1)}_2 \mathbf{A}_2 & \cdots & \Phi^{(m)}_2 \mathbf{A}_2 \\
-    \vdots  & \vdots &  & \vdots \\
-    \Phi^{(0)}_N \mathbf{A}_N  & \Phi^{(1)}_N \mathbf{A}_N & \cdots & \Phi^{(m)}_N \mathbf{A}_N \\
-  \end{bmatrix}
-  \begin{bmatrix}
-    \mathbf{x}^{(0)} \\
-    \mathbf{x}^{(1)} \\
-    \vdots \\
-    \mathbf{x}^{(m)} \\
-  \end{bmatrix}
-  +
-  \begin{bmatrix}
-    \mathbf{e}_1 \\
-    \mathbf{e}_2 \\
-    \vdots \\
-    \mathbf{e}_N \\
-  \end{bmatrix},
-\end{equation}
-where $\Phi^{(k)}_i$ ($\Phi^{(0)}_i = 1$) are the temporal basis functions specified by a
-\configClass{parametrizationTemporal}{parametrizationTemporalType}, for example, a linear trend $\Phi_i = (t_i - t_0)$.
-The normal equations corresponding to \eqref{eq:temporal-least-squares} are
-computed by accumulation of each interval which leads to
-\begin{equation}
-  \label{eq:temporal-normals-full}
-  \mathbf{N} = \sum^N_{i=1}
-  \begin{bmatrix}
-    \Phi^{(0)}_i \mathbf{A}^T_i\\
-    \Phi^{(1)}_i \mathbf{A}^T_i \\
-    \vdots \\
-    \Phi^{(m)}_i \mathbf{A}^T_i \\
-  \end{bmatrix}
-  \begin{bmatrix}
-    \Phi^{(0)}_i \mathbf{A}_i & \Phi^{(1)}_i \mathbf{A}_i & \cdots & \Phi^{(m)}_i \mathbf{A}_i \\
-  \end{bmatrix},
-  \hspace{15pt}
-  \mathbf{n} = \sum^N_{i=1}
-  \begin{bmatrix}
-    \Phi^{(0)}_i \mathbf{A}^T_i\\
-    \Phi^{(1)}_i \mathbf{A}^T_i \\
-    \vdots \\
-    \Phi^{(m)}_i \mathbf{A}^T_i \\
-  \end{bmatrix}
-  \mathbf{l}_i.
-\end{equation}
-For a single  normal equation block $\mathbf{N}^{(k, l)}$ which corresponds to the correlations
-between the parameter sets $\mathbf{x}^{(k)}$ and $\mathbf{x}^{(l)}$ follows
-\begin{equation}
-  \label{eq:temporal-normals-expanded}
-  \mathbf{N}^{(k, l)} = \sum_{i=1}^{N} (\Phi^{(k)}_i \mathbf{A}^T_i ) (  \Phi^{(l)}_i  \mathbf{A}_i) =
-  \sum_{i=1}^{N} \Phi^{(k)}_i \Phi^{(l)}_i  \mathbf{N}_i,
-\end{equation}
-where $\mathbf{N}_i = \mathbf{A}_i^T \mathbf{A}_i$.
-In analogy to \eqref{eq:temporal-normals-expanded} the right-hand side for each
-parameter vector can be computed via
-\begin{equation}
-  \label{eq:temporal-normals-rhs-expanded}
-  \mathbf{n}^{(k)} = \sum_{i=1}^{N} \Phi^{(k)}_i \mathbf{A}^T_i \mathbf{l}_i =  \sum_{i=1}^{N}  \Phi^{(k)}_i \mathbf{n}_i,
-\end{equation}
-utilizing $\mathbf{n}_i$.
-The normal equations are therefore only computed once for each interval and then multiplied with the pairwise product of the temporal factors.
-Note that the temporal constituents do not necessarily need to be of the same size as the static part.
-The number of parameters of the temporal constituents can be varied with \config{parameterCount}.
-This simply slices the first \config{parameterCount} columns from the design matrix $\mathbf{A}_i$
-and therefore has to be less or equal than the static parameter count.
-
-If an \configClass{autoregressiveModelSequence}{autoregressiveModelSequenceType} is specified,
-high-frequency variations are also set up.
-Their purpose is to mitigate temporal aliasing by accounting for short-term gravity field variations.
-The parameter count of these high-frequency variations is taken from the dimension of the
-\configClass{autoregressiveModelSequence}{autoregressiveModelSequenceType}
-and in the same fashion as the temporal variations simply sliced from $\mathbf{A}_i$.
-They are modeled as a constant value per interval so the corresponding temporal factor can be expressed as
-\begin{equation}
-  \label{eq:daily-parameters}
-  \Phi_i(t)
-  =
-  \begin{cases}
-    1 &\text{if} \hspace{5pt} t \in [t_i, t_{i+1}) \\
-    0 & \text{otherwise}
-  \end{cases}.
-\end{equation}
-A detailed description of the approach is given in:
-Kvas, A., Mayer-Gürr, T. GRACE gravity field recovery with background model uncertainties.
-J Geod 93, 2543–2552 (2019). \url{https://doi.org/10.1007/s00190-019-01314-1}.
-
-Before writing the normal equations to \configFile{outputfileNormalEquation}{normalEquation}
-high-frequency gravity and satellite specific parameters are eliminated.
-
-
-\keepXColumns
-\begin{tabularx}{\textwidth}{N T A}
-\hline
-Name & Type & Annotation\\
-\hline
-\hfuzz=500pt\includegraphics[width=1em]{element-mustset.pdf}~outputfileNormalEquation & \hfuzz=500pt filename & \hfuzz=500pt outputfile for normal equations\\
-\hfuzz=500pt\includegraphics[width=1em]{element-mustset.pdf}~observation & \hfuzz=500pt \hyperref[observationType]{observation} & \hfuzz=500pt \\
-\hfuzz=500pt\includegraphics[width=1em]{element.pdf}~autoregressiveModelSequence & \hfuzz=500pt \hyperref[autoregressiveModelSequenceType]{autoregressiveModelSequence} & \hfuzz=500pt AR model sequence for constraining high frequency variations\\
-\hfuzz=500pt\includegraphics[width=1em]{element.pdf}~temporal & \hfuzz=500pt sequence & \hfuzz=500pt \\
-\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element-mustset-unbounded.pdf}~parametrization & \hfuzz=500pt \hyperref[parametrizationTemporalType]{parametrizationTemporal} & \hfuzz=500pt use state normals to parametrize time variations (trend, annual, ...)\\
-\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element-mustset.pdf}~parameterCount & \hfuzz=500pt uint & \hfuzz=500pt use state normals to parametrize time variations (trend, annual, ...)\\
-\hfuzz=500pt\includegraphics[width=1em]{element.pdf}~inputfileArcList & \hfuzz=500pt filename & \hfuzz=500pt list to correspond points of time to arc numbers\\
-\hfuzz=500pt\includegraphics[width=1em]{element.pdf}~normalsBlockSize & \hfuzz=500pt uint & \hfuzz=500pt block size for distributing the normal equations, 0: one block\\
-\hfuzz=500pt\includegraphics[width=1em]{element.pdf}~memorySizePerNodeInGByte & \hfuzz=500pt double & \hfuzz=500pt avaiable memory for the normal equations (without observation equations)\\
-\hline
-\end{tabularx}
-
-This program is \reference{parallelized}{general.parallelization}.
-\clearpage
-%==================================
 \section{Programs: Misc}
 \subsection{DigitalFilter2FrequencyResponse}\label{DigitalFilter2FrequencyResponse}
 Compute amplitude-, phase-, group delay and frequency response of a \configClass{digitalFilter}{digitalFilterType} cascade.
@@ -4471,16 +4541,16 @@ Name & Type & Annotation\\
 %==================================
 \subsection{SatelliteModelCreate}\label{SatelliteModelCreate}
 This program creates a satellite macro model for the estimation of non-gravitational accelerations acting on a satellite.
-Mandatory input values are the \config{satelliteName}, \config{mass}, \config{coefficientDrag} and information 
-about the satellite \config{surfaces}. For low Earth orbiting satellites, like GRACE for instance, a good guess 
-for the drag coefficient could be 2.3. Apart from that, it is latter on possible to estimate a more precise variable drag coefficient 
-(e.g. \configClass{miscAccelerations:atmosphericDrag}{miscAccelerationsType:atmosphericDrag}), which will override this initial guess. 
+Mandatory input values are the \config{satelliteName}, \config{mass}, \config{coefficientDrag} and information
+about the satellite \config{surfaces}. For low Earth orbiting satellites, like GRACE for instance, a good guess
+for the drag coefficient could be 2.3. Apart from that, it is latter on possible to estimate a more precise variable drag coefficient
+(e.g. \configClass{miscAccelerations:atmosphericDrag}{miscAccelerationsType:atmosphericDrag}), which will override this initial guess.
 Concerning the satellite surfaces an external file must be imported which must contain information about each single
- satellite plate in terms of plate \config{area}, the associated plate normal and re-radiation properties 
-(reflexion, diffusion and absorption) properties in the visible and IR part. Examplarily, a description of 
+ satellite plate in terms of plate \config{area}, the associated plate normal and re-radiation properties
+(reflexion, diffusion and absorption) properties in the visible and IR part. Examplarily, a description of
 the macro model for GRACE can be found under:
 \url{https://podaac-tools.jpl.nasa.gov/drive/files/allData/grace/docs/ProdSpecDoc_v4.6.pdf}
-Additionally, it is possible to add further information like antennaThrust, solar panel, temporal mass changes and 
+Additionally, it is possible to add further information like antennaThrust, solar panel, temporal mass changes and
 massInstrument using the modules option.
 
 
@@ -4551,10 +4621,10 @@ Name & Type & Annotation\\
 \clearpage
 %==================================
 \subsection{ThermosphericState2GriddedData}\label{ThermosphericState2GriddedData}
-This program converts the output (neutral mass density,temperature) of an empirical thermosphere model (e.g. JB2008) on a given \configClass{grid}{gridType}. 
-Additionally, also the thermospheric winds estimated by using the horizontal wind model HWM 2014 can be assessed.  
+This program converts the output (neutral mass density,temperature) of an empirical thermosphere model (e.g. JB2008) on a given \configClass{grid}{gridType}.
+Additionally, also the thermospheric winds estimated by using the horizontal wind model HWM 2014 can be assessed.
 The time for the evaluation can be specified in \config{time}. The values will be saved together with points expressed as ellipsoidal coordinates
-(longitude, latitude, height) based on a reference ellipsoid with parameters \config{R} and \config{inverseFlattening}.    
+(longitude, latitude, height) based on a reference ellipsoid with parameters \config{R} and \config{inverseFlattening}.
 \fig{!hb}{1.0}{thermosphericState2GriddedData}{fig:thermosphericState2GriddedData}{JB2008 model in 300 km height at 2003-07-01 12:00.}
 
 
@@ -4683,6 +4753,80 @@ Name & Type & Annotation\\
 \hfuzz=500pt\includegraphics[width=1em]{element-mustset.pdf}~outputfileNormalEquation & \hfuzz=500pt filename & \hfuzz=500pt \\
 \hfuzz=500pt\includegraphics[width=1em]{element-mustset-unbounded.pdf}~normalEquation & \hfuzz=500pt \hyperref[normalEquationType]{normalEquation} & \hfuzz=500pt \\
 \hfuzz=500pt\includegraphics[width=1em]{element.pdf}~normalsBlockSize & \hfuzz=500pt uint & \hfuzz=500pt block size for distributing the normal equations, 0: one block\\
+\hline
+\end{tabularx}
+
+This program is \reference{parallelized}{general.parallelization}.
+\clearpage
+%==================================
+\subsection{NormalsBuildShortTimeStaticLongTime}\label{NormalsBuildShortTimeStaticLongTime}
+This program sets up normal equations based on \configClass{observation}{observationType}.
+Additionally short time and long time variations can be parametrized based on the static parameters
+in \configClass{observation}{observationType} in an efficient way. The observation equations
+are divided into time intervals $i \in \{1, ..., N\}$ (e.g. daily) as defined in
+\configFile{inputfileArcList}{arcList}.
+
+With \config{estimateLongTimeVariations} additional temporal variations can be co-estimated
+for a subset of the parameters selected by \configClass{parameterSelection}{parameterSelectorType}.
+These parameters might be spherical harmonic coefficients with a limited maximum degree.
+The temporal variations are represented by base functions $\Phi_k(t_i)$ (e.g. trend and annual oscillation)
+given by \configClass{parametrizationTemporal}{parametrizationTemporalType}.
+The temporal base functions are evaluated at the mid time~$t_i$ of each interval~$i$, multiplicated
+with the design matrix $\M A_i$ of the selected parameters, and the design matrix is extended
+accordingly.
+
+\fig{!hb}{0.8}{normalsBuildShortTimeStaticLongTime}{fig:normalsBuildShortTimeStaticLongTime}{Schema of the extended design matrix.}
+
+With \config{estimateShortTimeVariations} short time variations of the gravity field can be co-estimated.
+Their purpose is to mitigate temporal aliasing.
+The short time parameters selected by \configClass{parameterSelection}{parameterSelectorType}
+(e.g. daily constant or linear splines every 6 hour) are constrained by an
+\configClass{autoregressiveModelSequence}{autoregressiveModelSequenceType}. If only a static parameter
+set is selected the coressponding part of the design matrix is copied and modeled as a constant value
+per interval in \configFile{inputfileArcList}{arcList} additionally so the corresponding temporal factor can be expressed as
+\begin{equation}
+  \Phi_i(t)  =
+  \begin{cases}
+    1 &\text{if} \hspace{5pt} t \in [t_i, t_{i+1}) \\
+    0 & \text{otherwise}
+  \end{cases}.
+\end{equation}
+
+Before writing the normal equations to \configFile{outputfileNormalEquation}{normalEquation}
+short time gravity and satellite specific parameters can be eliminated with \config{eliminateParameter}.
+
+Example: For the computation of the mean gravity field ITSG-Grace2018s with additional trend and annual signal
+the normal equations are computed month by month and accumulated afterwards (see \program{NormalsAccumulate}).
+The observations were divided into daily intervals with \configFile{inputfileArcList}{arcList}.
+The static gravity field has been parametrized as spherical harmonics
+up to degree $n=200$ in \configClass{observation:parametrizationGravity}{parametrizationGravityType}.
+The trend and annual signals defined by
+\configClass{estimateLongTimeVariations:parametrizationTemporal}{parametrizationTemporalType}
+were estimated for selected parameters up to degree $n=120$.
+To mitigate temporal aliasing daily gravity fields up to degree $n=40$ were setup and constrained
+with an \configClass{autoregressiveModelSequence}{autoregressiveModelSequenceType} up to order three.
+
+A detailed description of the approach is given in:
+Kvas, A., Mayer-Gürr, T. GRACE gravity field recovery with background model uncertainties.
+J Geod 93, 2543–2552 (2019). \url{https://doi.org/10.1007/s00190-019-01314-1}.
+
+
+\keepXColumns
+\begin{tabularx}{\textwidth}{N T A}
+\hline
+Name & Type & Annotation\\
+\hline
+\hfuzz=500pt\includegraphics[width=1em]{element-mustset.pdf}~outputfileNormalEquation & \hfuzz=500pt filename & \hfuzz=500pt outputfile for normal equations\\
+\hfuzz=500pt\includegraphics[width=1em]{element-mustset.pdf}~observation & \hfuzz=500pt \hyperref[observationType]{observation} & \hfuzz=500pt \\
+\hfuzz=500pt\includegraphics[width=1em]{element.pdf}~estimateShortTimeVariations & \hfuzz=500pt sequence & \hfuzz=500pt co-estimate short time gravity field variations\\
+\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element-mustset.pdf}~autoregressiveModelSequence & \hfuzz=500pt \hyperref[autoregressiveModelSequenceType]{autoregressiveModelSequence} & \hfuzz=500pt AR model sequence for constraining short time gravity variations\\
+\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element-mustset-unbounded.pdf}~parameterSelection & \hfuzz=500pt \hyperref[parameterSelectorType]{parameterSelector} & \hfuzz=500pt parameters describing the short time gravity field\\
+\hfuzz=500pt\includegraphics[width=1em]{element.pdf}~estimateLongTimeVariations & \hfuzz=500pt sequence & \hfuzz=500pt co-estimate long time gravity field variations\\
+\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element-mustset-unbounded.pdf}~parametrizationTemporal & \hfuzz=500pt \hyperref[parametrizationTemporalType]{parametrizationTemporal} & \hfuzz=500pt parametrization of time variations (trend, annual, ...)\\
+\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element-mustset-unbounded.pdf}~parameterSelection & \hfuzz=500pt \hyperref[parameterSelectorType]{parameterSelector} & \hfuzz=500pt parameters describing the long time gravity field\\
+\hfuzz=500pt\includegraphics[width=1em]{element-mustset.pdf}~inputfileArcList & \hfuzz=500pt filename & \hfuzz=500pt list to correspond points of time to arc numbers\\
+\hfuzz=500pt\includegraphics[width=1em]{element.pdf}~defaultBlockSize & \hfuzz=500pt uint & \hfuzz=500pt block size for distributing the normal equations, 0: one block\\
+\hfuzz=500pt\includegraphics[width=1em]{element.pdf}~eliminateParameter & \hfuzz=500pt boolean & \hfuzz=500pt eliminate short time and state parameter\\
 \hline
 \end{tabularx}
 
@@ -5483,6 +5627,129 @@ Name & Type & Annotation\\
 \clearpage
 %==================================
 \section{Programs: Preprocessing}
+\subsection{PreprocessingDualSst}\label{PreprocessingDualSst}
+This programs processes satellite-to-satellite-tracking (SST) and orbit observations in a GRACE like configuration.
+Four different observation groups are considered separatly: two types of SST and POD1/POD2 for the two satellites.
+This program works similar to \program{PreprocessingSst}, see there for details. Here only the settings explained,
+which are different.
+
+Both SST observation types are reduced by the same background models and the same impact
+of accelerometer measurements. The covariance matrix of the reduced observations should not consider
+the the instrument noise only (\configClass{covarianceSst1/2}{covarianceSstType}) but must
+take the cross correlations \configClass{covarianceAcc}{covarianceSstType} into account.
+The covariance matrix of the reduced observations is given by
+\begin{equation}
+  \M\Sigma(\begin{bmatrix} \Delta l_{SST1} \\ \Delta l_{SST2} \end{bmatrix})
+  = \begin{bmatrix} \M\Sigma_{SST1} + \M\Sigma_{ACC} & \M\Sigma_{ACC} \\
+                   \M\Sigma_{ACC} & \M\Sigma_{SST2} + \M\Sigma_{ACC}
+    \end{bmatrix}.
+\end{equation}
+
+
+\keepXColumns
+\begin{tabularx}{\textwidth}{N T A}
+\hline
+Name & Type & Annotation\\
+\hline
+\hfuzz=500pt\includegraphics[width=1em]{element.pdf}~outputfileSolution & \hfuzz=500pt filename & \hfuzz=500pt estimated parameter vector (static part only)\\
+\hfuzz=500pt\includegraphics[width=1em]{element.pdf}~outputfileSigmax & \hfuzz=500pt filename & \hfuzz=500pt standard deviations of the parameters (sqrt of the diagonal of the inverse normal equation)\\
+\hfuzz=500pt\includegraphics[width=1em]{element.pdf}~outputfileParameterName & \hfuzz=500pt filename & \hfuzz=500pt estimated signal parameters (index is appended)\\
+\hfuzz=500pt\includegraphics[width=1em]{element.pdf}~estimateArcSigmas & \hfuzz=500pt sequence & \hfuzz=500pt \\
+\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~outputfileSigmasPerArcSst1 & \hfuzz=500pt filename & \hfuzz=500pt accuracies of each arc (SST1)\\
+\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~outputfileSigmasPerArcSst2 & \hfuzz=500pt filename & \hfuzz=500pt accuracies of each arc (SST2)\\
+\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~outputfileSigmasPerArcAcc & \hfuzz=500pt filename & \hfuzz=500pt accuracies of each arc (ACC)\\
+\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~outputfileSigmasPerArcPod1 & \hfuzz=500pt filename & \hfuzz=500pt accuracies of each arc (POD1)\\
+\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~outputfileSigmasPerArcPod2 & \hfuzz=500pt filename & \hfuzz=500pt accuracies of each arc (POD2)\\
+\hfuzz=500pt\includegraphics[width=1em]{element.pdf}~estimateEpochSigmas & \hfuzz=500pt sequence & \hfuzz=500pt \\
+\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~outputfileSigmasPerEpochSst1 & \hfuzz=500pt filename & \hfuzz=500pt accuracies of each epoch (SST1)\\
+\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~outputfileSigmasPerEpochSst2 & \hfuzz=500pt filename & \hfuzz=500pt accuracies of each epoch (SST2)\\
+\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~outputfileSigmasPerEpochAcc & \hfuzz=500pt filename & \hfuzz=500pt accuracies of each epoch (ACC)\\
+\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~outputfileSigmasPerEpochPod1 & \hfuzz=500pt filename & \hfuzz=500pt accuracies of each epoch (POD1)\\
+\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~outputfileSigmasPerEpochPod2 & \hfuzz=500pt filename & \hfuzz=500pt accuracies of each epoch (POD2)\\
+\hfuzz=500pt\includegraphics[width=1em]{element.pdf}~estimateCovarianceFunctions & \hfuzz=500pt sequence & \hfuzz=500pt \\
+\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~outputfileCovarianceFunctionSst1 & \hfuzz=500pt filename & \hfuzz=500pt covariance function\\
+\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~outputfileCovarianceFunctionSst2 & \hfuzz=500pt filename & \hfuzz=500pt covariance function\\
+\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~outputfileCovarianceFunctionAcc & \hfuzz=500pt filename & \hfuzz=500pt covariance function\\
+\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~outputfileCovarianceFunctionPod1 & \hfuzz=500pt filename & \hfuzz=500pt covariance functions for along, cross, radial direction\\
+\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~outputfileCovarianceFunctionPod2 & \hfuzz=500pt filename & \hfuzz=500pt covariance functions for along, cross, radial direction\\
+\hfuzz=500pt\includegraphics[width=1em]{element.pdf}~computeResiduals & \hfuzz=500pt sequence & \hfuzz=500pt \\
+\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~outputfileSst1Residuals & \hfuzz=500pt filename & \hfuzz=500pt \\
+\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~outputfileSst2Residuals & \hfuzz=500pt filename & \hfuzz=500pt \\
+\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~outputfileAccResiduals & \hfuzz=500pt filename & \hfuzz=500pt \\
+\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~outputfilePod1Residuals & \hfuzz=500pt filename & \hfuzz=500pt \\
+\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~outputfilePod2Residuals & \hfuzz=500pt filename & \hfuzz=500pt \\
+\hfuzz=500pt\includegraphics[width=1em]{element-mustset.pdf}~observation & \hfuzz=500pt choice & \hfuzz=500pt obervation equations (Sst)\\
+\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element-mustset.pdf}~dualSstVariational & \hfuzz=500pt sequence & \hfuzz=500pt two SST observations\\
+\hfuzz=500pt\quad\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element-mustset.pdf}~rightHandSide & \hfuzz=500pt sequence & \hfuzz=500pt input for observation vectors\\
+\hfuzz=500pt\quad\quad\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element-mustset-unbounded.pdf}~inputfileSatelliteTracking1 & \hfuzz=500pt filename & \hfuzz=500pt ranging observations and corrections\\
+\hfuzz=500pt\quad\quad\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element-mustset-unbounded.pdf}~inputfileSatelliteTracking2 & \hfuzz=500pt filename & \hfuzz=500pt ranging observations and corrections\\
+\hfuzz=500pt\quad\quad\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~inputfileOrbit1 & \hfuzz=500pt filename & \hfuzz=500pt kinematic positions of satellite A as observations\\
+\hfuzz=500pt\quad\quad\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~inputfileOrbit2 & \hfuzz=500pt filename & \hfuzz=500pt kinematic positions of satellite B as observations\\
+\hfuzz=500pt\quad\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element-mustset.pdf}~sstType & \hfuzz=500pt choice & \hfuzz=500pt \\
+\hfuzz=500pt\quad\quad\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element-mustset.pdf}~range & \hfuzz=500pt  & \hfuzz=500pt \\
+\hfuzz=500pt\quad\quad\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element-mustset.pdf}~rangeRate & \hfuzz=500pt  & \hfuzz=500pt \\
+\hfuzz=500pt\quad\quad\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element-mustset.pdf}~none & \hfuzz=500pt  & \hfuzz=500pt \\
+\hfuzz=500pt\quad\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element-mustset.pdf}~inputfileVariational1 & \hfuzz=500pt filename & \hfuzz=500pt approximate position and integrated state matrix\\
+\hfuzz=500pt\quad\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element-mustset.pdf}~inputfileVariational2 & \hfuzz=500pt filename & \hfuzz=500pt approximate position and integrated state matrix\\
+\hfuzz=500pt\quad\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~ephemerides & \hfuzz=500pt \hyperref[ephemeridesType]{ephemerides} & \hfuzz=500pt \\
+\hfuzz=500pt\quad\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element-unbounded.pdf}~parametrizationGravity & \hfuzz=500pt \hyperref[parametrizationGravityType]{parametrizationGravity} & \hfuzz=500pt gravity field parametrization\\
+\hfuzz=500pt\quad\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element-unbounded.pdf}~parametrizationAcceleration1 & \hfuzz=500pt \hyperref[parametrizationAccelerationType]{parametrizationAcceleration} & \hfuzz=500pt orbit1 force parameters\\
+\hfuzz=500pt\quad\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element-unbounded.pdf}~parametrizationAcceleration2 & \hfuzz=500pt \hyperref[parametrizationAccelerationType]{parametrizationAcceleration} & \hfuzz=500pt orbit2 force parameters\\
+\hfuzz=500pt\quad\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element-unbounded.pdf}~parametrizationSst1 & \hfuzz=500pt \hyperref[parametrizationSatelliteTrackingType]{parametrizationSatelliteTracking} & \hfuzz=500pt satellite tracking parameter for first ranging observations\\
+\hfuzz=500pt\quad\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element-unbounded.pdf}~parametrizationSst2 & \hfuzz=500pt \hyperref[parametrizationSatelliteTrackingType]{parametrizationSatelliteTracking} & \hfuzz=500pt satellite tracking parameter for second ranging observations\\
+\hfuzz=500pt\quad\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~integrationDegree & \hfuzz=500pt uint & \hfuzz=500pt integration of forces by polynomial approximation of degree n\\
+\hfuzz=500pt\quad\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~interpolationDegree & \hfuzz=500pt uint & \hfuzz=500pt orbit interpolation by polynomial approximation of degree n\\
+\hfuzz=500pt\includegraphics[width=1em]{element-mustset.pdf}~covarianceSst1 & \hfuzz=500pt sequence & \hfuzz=500pt \\
+\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~sigma & \hfuzz=500pt double & \hfuzz=500pt apriori factor of covariance function\\
+\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~inputfileSigmasPerArc & \hfuzz=500pt filename & \hfuzz=500pt apriori different accuaries for each arc (multiplicated with sigma)\\
+\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~inputfileSigmasPerEpoch & \hfuzz=500pt filename & \hfuzz=500pt apriori different accuaries for each epoch\\
+\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~inputfileCovarianceFunction & \hfuzz=500pt filename & \hfuzz=500pt approximate covariances in time\\
+\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element-unbounded.pdf}~inputfileCovarianceMatrixArc & \hfuzz=500pt filename & \hfuzz=500pt Must be given per sst arc with correct dimensions.\\
+\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~inputfileSigmasCovarianceMatrixArc & \hfuzz=500pt filename & \hfuzz=500pt Vector with one sigma for each \$<\$inputfileCovarianceMatrixArc\$>\$\\
+\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~sampling & \hfuzz=500pt double & \hfuzz=500pt [seconds] sampling of the covariance function\\
+\hfuzz=500pt\includegraphics[width=1em]{element-mustset.pdf}~covarianceSst2 & \hfuzz=500pt sequence & \hfuzz=500pt \\
+\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~sigma & \hfuzz=500pt double & \hfuzz=500pt apriori factor of covariance function\\
+\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~inputfileSigmasPerArc & \hfuzz=500pt filename & \hfuzz=500pt apriori different accuaries for each arc (multiplicated with sigma)\\
+\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~inputfileSigmasPerEpoch & \hfuzz=500pt filename & \hfuzz=500pt apriori different accuaries for each epoch\\
+\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~inputfileCovarianceFunction & \hfuzz=500pt filename & \hfuzz=500pt approximate covariances in time\\
+\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element-unbounded.pdf}~inputfileCovarianceMatrixArc & \hfuzz=500pt filename & \hfuzz=500pt Must be given per sst arc with correct dimensions.\\
+\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~inputfileSigmasCovarianceMatrixArc & \hfuzz=500pt filename & \hfuzz=500pt Vector with one sigma for each \$<\$inputfileCovarianceMatrixArc\$>\$\\
+\hfuzz=500pt\includegraphics[width=1em]{element-mustset.pdf}~covarianceAcc & \hfuzz=500pt sequence & \hfuzz=500pt \\
+\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~sigma & \hfuzz=500pt double & \hfuzz=500pt apriori factor of covariance function\\
+\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~inputfileSigmasPerArc & \hfuzz=500pt filename & \hfuzz=500pt apriori different accuaries for each arc (multplicated with sigma)\\
+\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~inputfileSigmasPerEpoch & \hfuzz=500pt filename & \hfuzz=500pt apriori different accuaries for each epoch\\
+\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~inputfileCovarianceFunction & \hfuzz=500pt filename & \hfuzz=500pt approximate covariances in time\\
+\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element-unbounded.pdf}~inputfileCovarianceMatrixArc & \hfuzz=500pt filename & \hfuzz=500pt Must be given per sst arc with correct dimensions.\\
+\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~inputfileSigmasCovarianceMatrixArc & \hfuzz=500pt filename & \hfuzz=500pt Vector with one sigma for each \$<\$inputfileCovarianceMatrixArc\$>\$\\
+\hfuzz=500pt\includegraphics[width=1em]{element-mustset.pdf}~covariancePod1 & \hfuzz=500pt sequence & \hfuzz=500pt \\
+\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~sigma & \hfuzz=500pt double & \hfuzz=500pt apriori factor of covariance function\\
+\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~inputfileSigmasPerArc & \hfuzz=500pt filename & \hfuzz=500pt apriori different accuaries for each arc (multiplicated with sigma)\\
+\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~inputfileSigmasPerEpoch & \hfuzz=500pt filename & \hfuzz=500pt apriori different accuaries for each epoch\\
+\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~inputfileCovarianceFunction & \hfuzz=500pt filename & \hfuzz=500pt approximate covariances in time\\
+\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~inputfileCovariancePodEpoch & \hfuzz=500pt filename & \hfuzz=500pt 3x3 epoch covariances\\
+\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~sampling & \hfuzz=500pt double & \hfuzz=500pt [seconds] sampling of the covariance function\\
+\hfuzz=500pt\includegraphics[width=1em]{element-mustset.pdf}~covariancePod2 & \hfuzz=500pt sequence & \hfuzz=500pt \\
+\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~sigma & \hfuzz=500pt double & \hfuzz=500pt apriori factor of covariance function\\
+\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~inputfileSigmasPerArc & \hfuzz=500pt filename & \hfuzz=500pt apriori different accuaries for each arc (multiplicated with sigma)\\
+\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~inputfileSigmasPerEpoch & \hfuzz=500pt filename & \hfuzz=500pt apriori different accuaries for each epoch\\
+\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~inputfileCovarianceFunction & \hfuzz=500pt filename & \hfuzz=500pt approximate covariances in time\\
+\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~inputfileCovariancePodEpoch & \hfuzz=500pt filename & \hfuzz=500pt 3x3 epoch covariances\\
+\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~sampling & \hfuzz=500pt double & \hfuzz=500pt [seconds] sampling of the covariance function\\
+\hfuzz=500pt\includegraphics[width=1em]{element.pdf}~estimateShortTimeVariations & \hfuzz=500pt sequence & \hfuzz=500pt co-estimate short time gravity field variations\\
+\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~estimateSigma & \hfuzz=500pt boolean & \hfuzz=500pt estimate standard deviation via VCE\\
+\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element-mustset.pdf}~autoregressiveModelSequence & \hfuzz=500pt \hyperref[autoregressiveModelSequenceType]{autoregressiveModelSequence} & \hfuzz=500pt AR model sequence for constraining short time gravity variations\\
+\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element-mustset-unbounded.pdf}~parameterSelection & \hfuzz=500pt \hyperref[parameterSelectorType]{parameterSelector} & \hfuzz=500pt parameters describing the short time gravity field\\
+\hfuzz=500pt\includegraphics[width=1em]{element.pdf}~downweightPod & \hfuzz=500pt double & \hfuzz=500pt downweight factor for POD\\
+\hfuzz=500pt\includegraphics[width=1em]{element.pdf}~inputfileArcList & \hfuzz=500pt filename & \hfuzz=500pt list to correspond points of time to arc numbers\\
+\hfuzz=500pt\includegraphics[width=1em]{element.pdf}~iterationCount & \hfuzz=500pt uint & \hfuzz=500pt (maximum) number of iterations for the estimation of calibration parameter and error PSD\\
+\hfuzz=500pt\includegraphics[width=1em]{element.pdf}~variableNameIterations & \hfuzz=500pt string & \hfuzz=500pt All output fileNames in preprocessing iteration are expanded with this variable prior to writing to disk\\
+\hfuzz=500pt\includegraphics[width=1em]{element.pdf}~defaultBlockSize & \hfuzz=500pt uint & \hfuzz=500pt block size of static normal equation blocks\\
+\hline
+\end{tabularx}
+
+This program is \reference{parallelized}{general.parallelization}.
+\clearpage
+%==================================
 \subsection{PreprocessingGradiometer}\label{PreprocessingGradiometer}
 This program estimates empirical covariance functions of the gradiometer instrument noise and determine arc wise variances to
 downweight arcs with outliers. This program works similar to \program{PreprocessingPod}, see there for details.
@@ -5604,31 +5871,29 @@ This program is \reference{parallelized}{general.parallelization}.
 \clearpage
 %==================================
 \subsection{PreprocessingSst}\label{PreprocessingSst}
-This programs processes satellite-to-satellite-tracking (SST) and orbit observations in a GRACE like configuration.
+This program processes satellite-to-satellite-tracking (SST) and kinematic orbit observations in a GRACE like configuration.
 Three different observation groups are considered separatly: SST and POD1/POD2 for the two satellites.
 This program works similar to \program{PreprocessingPod}, see there for details. Here only deviations
 in the settings are explained.
 
-Precise orbit data (POD) contain often systematic errors additional to stochastic noise. In this case the
-variance component estimation fails and assign too much weight to the data. Therefore an additional
+Precise orbit data (POD) often contains systematic errors in addition to stochastic noise. In this case the
+variance component estimation fails and assigns too much weight to the POD data. Therefore an additional
 \config{downweightPod} factor can be applied to the standard deviation of POD for the next least squares adjustment
 in the iteration. This factor should also applied as \config{sigma} in \configClass{observation}{observationType}
 for computation of the final solution e.g. with \program{NormalsSolverVCE}.
 
-Daily variations (or other intervals) of the gravity field can be co-estimated together with the static/monthly
-mean gravity field. The \configClass{covarianceSignal:parametrizationGravity}{parametrizationGravityType}
-describes the daily gravity field parameters and must agree with the parametrization of the covariance matrices.
-Furthermore it must be part of
-the \configClass{parametrizationGravity}{parametrizationGravityType} selected in \config{observation}.
-The intervals are defined in \config{arcList}, created by \program{InstrumentSynchronize}.
-These daily estimates must be constrained by providing
-\config{inputfileCovariance} matrices in \config{covarianceSignal}. The first file provides the spatial signal
-covariances and the second, third and so on files the spatial and temporal covariances between one day and the
-next days respectively. The covariance matrices are the same as used in \program{KalmanFilter} and can be
-generated with \program{Gravityfield2EmpiricalCovariance}. It is possible to scale the covariance matrices with
-\config{covarianceSignal:sigma} and to estimate the factor by means of variance component estimation.
-The daily (or in general interval) estimates can be written with \configFile{outputfileSolutionSignal}{matrix}.
-For every interval a file is written with an index appended (counting from zero) to the file name.
+Short time variations of the gravity field can be co-estimated together with the static/monthly
+mean gravity field. The short time parameters must also be set in \configClass{observation:parametrizationGravity}{parametrizationGravityType} and
+can then be selected by \configClass{estimateShortTimeVariations:parameterSelection}{parameterSelectorType}.
+If these parameters are not time variable, for example when a range of static parameters is selected,
+they are set up as constant for each time interval defined in \config{inputfileArcList}. The parameters are constrained by an
+\configClass{estimateShortTimeVariations:autoregressiveModelSequence}{autoregressiveModelSequenceType}. The weight of
+the constrain equations in terms of the standard deviation can be estimated by means of
+Variance Component Estimation (VCE) if \config{estimateShortTimeVariations:estimateSigma} is set.
+The mathematical background of this co-estimation can be found in:
+
+Kvas, A., Mayer-Gürr, T. GRACE gravity field recovery with background model uncertainties.
+J Geod 93, 2543–2552 (2019). \url{https://doi.org/10.1007/s00190-019-01314-1}.
 
 
 \keepXColumns
@@ -5639,8 +5904,6 @@ Name & Type & Annotation\\
 \hfuzz=500pt\includegraphics[width=1em]{element.pdf}~outputfileSolution & \hfuzz=500pt filename & \hfuzz=500pt estimated parameter vector (static part only)\\
 \hfuzz=500pt\includegraphics[width=1em]{element.pdf}~outputfileSigmax & \hfuzz=500pt filename & \hfuzz=500pt standard deviations of the parameters (sqrt of the diagonal of the inverse normal equation)\\
 \hfuzz=500pt\includegraphics[width=1em]{element.pdf}~outputfileParameterName & \hfuzz=500pt filename & \hfuzz=500pt estimated signal parameters (index is appended)\\
-\hfuzz=500pt\includegraphics[width=1em]{element.pdf}~outputfileSolutionHighFrequency & \hfuzz=500pt filename & \hfuzz=500pt estimated high-frequency gravity field parameters (index is appended for each interval)\\
-\hfuzz=500pt\includegraphics[width=1em]{element.pdf}~outputfileSolutionInterval & \hfuzz=500pt filename & \hfuzz=500pt other interval parameters (index is appended)\\
 \hfuzz=500pt\includegraphics[width=1em]{element.pdf}~estimateArcSigmas & \hfuzz=500pt sequence & \hfuzz=500pt \\
 \hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~outputfileSigmasPerArcSst & \hfuzz=500pt filename & \hfuzz=500pt accuracies of each arc (SST)\\
 \hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~outputfileSigmasPerArcPod1 & \hfuzz=500pt filename & \hfuzz=500pt accuracies of each arc (POD1)\\
@@ -5653,8 +5916,8 @@ Name & Type & Annotation\\
 \hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~outputfileCovarianceFunctionSst & \hfuzz=500pt filename & \hfuzz=500pt covariance function\\
 \hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~outputfileCovarianceFunctionPod1 & \hfuzz=500pt filename & \hfuzz=500pt covariance functions for along, cross, radial direction\\
 \hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~outputfileCovarianceFunctionPod2 & \hfuzz=500pt filename & \hfuzz=500pt covariance functions for along, cross, radial direction\\
-\hfuzz=500pt\includegraphics[width=1em]{element.pdf}~estimateSstArcWiseCovariancesVarianceFactors & \hfuzz=500pt sequence & \hfuzz=500pt \\
-\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~outputfileVarianceFactors & \hfuzz=500pt filename & \hfuzz=500pt one variance factor per matrix\\
+\hfuzz=500pt\includegraphics[width=1em]{element.pdf}~estimateSstArcCovarianceSigmas & \hfuzz=500pt sequence & \hfuzz=500pt \\
+\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~outputfileSigmasCovarianceMatrixArc & \hfuzz=500pt filename & \hfuzz=500pt one variance factor per matrix\\
 \hfuzz=500pt\includegraphics[width=1em]{element.pdf}~computeResiduals & \hfuzz=500pt sequence & \hfuzz=500pt \\
 \hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~outputfileSstResiduals & \hfuzz=500pt filename & \hfuzz=500pt \\
 \hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~outputfilePod1Residuals & \hfuzz=500pt filename & \hfuzz=500pt \\
@@ -5685,7 +5948,7 @@ Name & Type & Annotation\\
 \hfuzz=500pt\quad\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~interpolationDegree & \hfuzz=500pt uint & \hfuzz=500pt orbit interpolation by polynomial approximation of degree n\\
 \hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element-mustset.pdf}~sstVariational & \hfuzz=500pt sequence & \hfuzz=500pt variational equations\\
 \hfuzz=500pt\quad\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element-mustset.pdf}~rightHandSide & \hfuzz=500pt sequence & \hfuzz=500pt input for observation vectors\\
-\hfuzz=500pt\quad\quad\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element-unbounded.pdf}~inputfileSatelliteTracking & \hfuzz=500pt filename & \hfuzz=500pt ranging observations and corrections\\
+\hfuzz=500pt\quad\quad\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element-mustset-unbounded.pdf}~inputfileSatelliteTracking & \hfuzz=500pt filename & \hfuzz=500pt ranging observations and corrections\\
 \hfuzz=500pt\quad\quad\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~inputfileOrbit1 & \hfuzz=500pt filename & \hfuzz=500pt kinematic positions of satellite A as observations\\
 \hfuzz=500pt\quad\quad\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~inputfileOrbit2 & \hfuzz=500pt filename & \hfuzz=500pt kinematic positions of satellite B as observations\\
 \hfuzz=500pt\quad\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element-mustset.pdf}~sstType & \hfuzz=500pt choice & \hfuzz=500pt \\
@@ -5723,16 +5986,15 @@ Name & Type & Annotation\\
 \hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~inputfileCovarianceFunction & \hfuzz=500pt filename & \hfuzz=500pt approximate covariances in time\\
 \hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~inputfileCovariancePodEpoch & \hfuzz=500pt filename & \hfuzz=500pt 3x3 epoch covariances\\
 \hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~sampling & \hfuzz=500pt double & \hfuzz=500pt [seconds] sampling of the covariance function\\
-\hfuzz=500pt\includegraphics[width=1em]{element.pdf}~estimateHighFrequencyVariations & \hfuzz=500pt sequence & \hfuzz=500pt co-estimate high-frequency gravity field variations\\
-\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~estimateSigma & \hfuzz=500pt boolean & \hfuzz=500pt estimate factor of covariance  function (VCE)\\
-\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~sigma & \hfuzz=500pt double & \hfuzz=500pt a-priori standard deviation for AR model regularization\\
-\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element-mustset.pdf}~autoregressiveModelSequence & \hfuzz=500pt \hyperref[autoregressiveModelSequenceType]{autoregressiveModelSequence} & \hfuzz=500pt AR model sequence for constraining high frequency gravity variations\\
-\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element-mustset-unbounded.pdf}~parametrization & \hfuzz=500pt \hyperref[parametrizationGravityType]{parametrizationGravity} & \hfuzz=500pt must be set in observation too\\
-\hfuzz=500pt\includegraphics[width=1em]{element.pdf}~inputfileArcList & \hfuzz=500pt filename & \hfuzz=500pt list to correspond points of time to arc numbers\\
-\hfuzz=500pt\includegraphics[width=1em]{element.pdf}~adjustmentThreshold & \hfuzz=500pt double & \hfuzz=500pt Adjustment factor threshold: Iteration will be stopped once both SST and POD adjustment factors are under this threshold\\
-\hfuzz=500pt\includegraphics[width=1em]{element.pdf}~iterationCount & \hfuzz=500pt uint & \hfuzz=500pt (maximum) number of iterations for the estimation of calibration parameter and error PSD\\
+\hfuzz=500pt\includegraphics[width=1em]{element.pdf}~estimateShortTimeVariations & \hfuzz=500pt sequence & \hfuzz=500pt co-estimate short time gravity field variations\\
+\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~estimateSigma & \hfuzz=500pt boolean & \hfuzz=500pt estimate standard deviation via VCE\\
+\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element-mustset.pdf}~autoregressiveModelSequence & \hfuzz=500pt \hyperref[autoregressiveModelSequenceType]{autoregressiveModelSequence} & \hfuzz=500pt AR model sequence for constraining short time gravity variations\\
+\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element-mustset-unbounded.pdf}~parameterSelection & \hfuzz=500pt \hyperref[parameterSelectorType]{parameterSelector} & \hfuzz=500pt parameters describing the short time gravity field\\
 \hfuzz=500pt\includegraphics[width=1em]{element.pdf}~downweightPod & \hfuzz=500pt double & \hfuzz=500pt downweight factor for POD\\
+\hfuzz=500pt\includegraphics[width=1em]{element.pdf}~inputfileArcList & \hfuzz=500pt filename & \hfuzz=500pt list to correspond points of time to arc numbers\\
+\hfuzz=500pt\includegraphics[width=1em]{element.pdf}~iterationCount & \hfuzz=500pt uint & \hfuzz=500pt (maximum) number of iterations for the estimation of calibration parameter and error PSD\\
 \hfuzz=500pt\includegraphics[width=1em]{element.pdf}~variableNameIterations & \hfuzz=500pt string & \hfuzz=500pt All output fileNames in preprocessing iteration are expanded with this variable prior to writing to disk\\
+\hfuzz=500pt\includegraphics[width=1em]{element.pdf}~defaultBlockSize & \hfuzz=500pt uint & \hfuzz=500pt block size of static normal equation blocks\\
 \hline
 \end{tabularx}
 
@@ -5789,7 +6051,7 @@ Name & Type & Annotation\\
 \hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element-mustset.pdf}~inputfileParameter & \hfuzz=500pt filename & \hfuzz=500pt estimated orbit force parameters\\
 \hfuzz=500pt\includegraphics[width=1em]{element-mustset.pdf}~earthRotation & \hfuzz=500pt \hyperref[earthRotationType]{earthRotation} & \hfuzz=500pt \\
 \hfuzz=500pt\includegraphics[width=1em]{element.pdf}~ephemerides & \hfuzz=500pt \hyperref[ephemeridesType]{ephemerides} & \hfuzz=500pt \\
-\hfuzz=500pt\includegraphics[width=1em]{element-unbounded.pdf}~gradientfield & \hfuzz=500pt \hyperref[gravityfieldType]{gravityfield} & \hfuzz=500pt low order field to estimate the change of the gravity by position adjustement\\
+\hfuzz=500pt\includegraphics[width=1em]{element-mustset-unbounded.pdf}~gradientfield & \hfuzz=500pt \hyperref[gravityfieldType]{gravityfield} & \hfuzz=500pt low order field to estimate the change of the gravity by position adjustement\\
 \hfuzz=500pt\includegraphics[width=1em]{element.pdf}~integrationDegree & \hfuzz=500pt uint & \hfuzz=500pt integration of forces by polynomial approximation of degree n\\
 \hfuzz=500pt\includegraphics[width=1em]{element.pdf}~useEnke & \hfuzz=500pt sequence & \hfuzz=500pt integrate differential forces to an elliptical reference trajectory\\
 \hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~GM & \hfuzz=500pt double & \hfuzz=500pt geocentric gravitational constant used for elliptical reference orbit\\
@@ -5869,7 +6131,7 @@ Name & Type & Annotation\\
 \hfuzz=500pt\includegraphics[width=1em]{element.pdf}~outputfileSolution1 & \hfuzz=500pt filename & \hfuzz=500pt estimated calibration and state parameters\\
 \hfuzz=500pt\includegraphics[width=1em]{element.pdf}~outputfileSolution2 & \hfuzz=500pt filename & \hfuzz=500pt estimated calibration and state parameters\\
 \hfuzz=500pt\includegraphics[width=1em]{element-mustset.pdf}~rightHandSide & \hfuzz=500pt sequence & \hfuzz=500pt input for observation vectors\\
-\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element-unbounded.pdf}~inputfileSatelliteTracking & \hfuzz=500pt filename & \hfuzz=500pt ranging observations and corrections\\
+\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element-mustset-unbounded.pdf}~inputfileSatelliteTracking & \hfuzz=500pt filename & \hfuzz=500pt ranging observations and corrections\\
 \hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~inputfileOrbit1 & \hfuzz=500pt filename & \hfuzz=500pt kinematic positions of satellite A as observations\\
 \hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~inputfileOrbit2 & \hfuzz=500pt filename & \hfuzz=500pt kinematic positions of satellite B as observations\\
 \hfuzz=500pt\includegraphics[width=1em]{element-mustset.pdf}~sstType & \hfuzz=500pt choice & \hfuzz=500pt \\
@@ -6308,17 +6570,66 @@ This program is \reference{parallelized}{general.parallelization}.
 \clearpage
 %==================================
 \subsection{SimulateStarCameraGnss}\label{SimulateStarCameraGnss}
-This program simulates \file{star camera}{instrument} measurements at each satellite position.
-The resulting rotation matrices rotate from body frame to inertial frame.
+This program simulates \file{star camera}{instrument} measurements at each satellite position
+of \configFile{inputfileOrbit}{instrument}.
+The resulting rotation matrices rotate from body frame to inertial frame. The body frame refers
+to the IGS-specific (not the manufacturer-specific) body frame, as described by
+\href{https://doi.org/10.1016/j.asr.2015.06.019}{Montenbruck et al. (2015)}.
+The \configFile{inputfileOrbit}{instrument} must contain velocities
+(use \program{OrbitAddVelocityAndAcceleration} if needed).
 
-The nominal orientation is simulated to be z-axis towards the center of Earth, y-axis is along solar panel axis,
-and x-axis forms a right hand system (points roughly towards the sun).
+Information about the attitude mode(s) used by the GNSS satellite may be provided via
+\configFile{inputfileAttitudeInfo}{instrument}. This file can be created with
+\program{GnssAttitudeInfoCreate}. It contains one or more time-dependent entries,
+each defining the default attitude mode, the attitude modes used around orbit noon and
+midnight, and some parameters required by the various modes.
+If no \configFile{inputfileAttitudeInfo}{instrument} is selected, the program defaults
+to a nominal yaw-steering attitude model.
+A sufficiently high \config{modelingResolution} ensures that the attitude behavior is modeled properly
+at all times.
 
-GPS attitude model: Kouba (2009), 'A simplified yaw-attitude model for eclipsing GPS satellites' \url{https://doi.org/10.1007/s10291-008-0092-1}
+The attitude behavior is defined by the respective mode. Here is a list of the supported
+modes with a brief explanation and references:
+\begin{itemize}
+\item \textbf{nominalYawSteering}:
+      Yaw to keep solar panels aligned to Sun (e.g. most GNSS satellites outside eclipse) [1]
+\item \textbf{orbitNormal}:
+      Keep fixed yaw angle, for example point X-axis in flight direction (e.g. BDS-2G, BDS-3G, QZS-2G) [1]
+\item \textbf{catchUpYawSteering}:
+      Yaw at maximum yaw rate to catch up to nominal yaw angle (e.g. GPS-* (noon), GPS-IIR (midnight)) [2, 3]
+\item \textbf{shadowMaxYawSteeringAndRecovery}:
+      Yaw at maximum yaw rate from shadow start to end, recover after shadow (e.g. GPS-IIA (midnight)) [2]
+\item \textbf{shadowMaxYawSteeringAndStop}:
+      Yaw at maximum yaw rate from shadow start until nominal yaw angle at shadow end is reached,
+      then stop (e.g. GLO-M (midnight)) [4]
+\item \textbf{shadowConstantYawSteering}:
+      Yaw at constant yaw rate from shadow start to end (e.g. GPS-IIF (midnight)) [3]
+\item \textbf{centeredMaxYawSteering}:
+      Yaw at maximum yaw rate centered around noon/midnight (e.g. QZS-2I, GLO-M (noon)) [4, 8]
+\item \textbf{smoothedYawSteering1}:
+      Yaw based on an auxiliary Sun vector for a smooth yaw maneuver (e.g. GAL-1) [5]
+\item \textbf{smoothedYawSteering2}:
+      Yaw based on a modified yaw-steering law for a smooth yaw maneuver (e.g. GAL-2, BDS-3M, BDS-3I) [5, 6]
+\item \textbf{betaDependentOrbitNormal}:
+      Switch to orbit normal mode if below beta angle threshold (e.g. BDS-2M, BDS-2I, QZS-1) [7, 8]
+\end{itemize}
 
-Galileo attitude model: \url{https://www.gsc-europa.eu/support-to-developers/galileo-satellite-metadata}
+\fig{!hb}{0.9}{gnssAttitudeModes}{fig:gnssAttitudeModes1}{Overview of attitude modes used by GNSS satellites}
 
-See also \program{GnssAntex2AntennaDefinition} and \program{GnssYawBias2Instrument}.
+See \program{GnssAttitudeInfoCreate} for more details on which satellite uses which attitude modes
+and the required parameters for each mode.
+
+References for the attitude modes:
+\begin{enumerate}
+\item \href{https://doi.org/10.1016/j.asr.2015.06.019}{Montenbruck et al. (2015)}
+\item \href{https://doi.org/10.1007/s10291-008-0092-1}{Kouba (2009)}
+\item \href{https://doi.org/10.1007/s10291-016-0562-9}{Kuang et al. (2017)}
+\item \href{https://doi.org/10.1016/j.asr.2010.09.007}{Dilssner et al. (2011)}
+\item \url{https://www.gsc-europa.eu/support-to-developers/galileo-satellite-metadata#3}
+\item \href{https://doi.org/10.1007/s10291-018-0783-1}{Wang et al. (2018)}
+\item \href{https://doi.org/10.1017/S0373463318000103}{Li et al. (2018)}
+\item \url{https://qzss.go.jp/en/technical/qzssinfo/index.html}
+\end{enumerate}
 
 
 \keepXColumns
@@ -6326,27 +6637,11 @@ See also \program{GnssAntex2AntennaDefinition} and \program{GnssYawBias2Instrume
 \hline
 Name & Type & Annotation\\
 \hline
-\hfuzz=500pt\includegraphics[width=1em]{element-mustset.pdf}~outputfileStarCamera & \hfuzz=500pt filename & \hfuzz=500pt rotation from body frame to inertial frame\\
-\hfuzz=500pt\includegraphics[width=1em]{element-mustset.pdf}~inputfileOrbit & \hfuzz=500pt filename & \hfuzz=500pt position defines the orientation of the satellite at each epoch\\
-\hfuzz=500pt\includegraphics[width=1em]{element-mustset.pdf}~attitudeModel & \hfuzz=500pt choice & \hfuzz=500pt GNSS satellite attitude model\\
-\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element-mustset.pdf}~nominal & \hfuzz=500pt  & \hfuzz=500pt Nominal attitude: z towards Earth, y along solar panel axis, x roughly towards sun (y cross z)\\
-\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element-mustset.pdf}~ecom & \hfuzz=500pt  & \hfuzz=500pt ECOM attitude: x (d) towards Sun, y along solar panel axis, z (b) roughly towards Earth (d cross y)\\
-\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element-mustset.pdf}~Kouba2009 & \hfuzz=500pt sequence & \hfuzz=500pt True attitude based on model by Kouba (2009): z towards Earth, y along solar panel axis (adjusted for yaw maneuvers), x roughly towards sun (y cross z)\\
-\hfuzz=500pt\quad\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element-mustset.pdf}~inputfileTransmitterInfo & \hfuzz=500pt filename & \hfuzz=500pt GNSS satellite info file\\
-\hfuzz=500pt\quad\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element-mustset.pdf}~inputfileYawBias & \hfuzz=500pt filename & \hfuzz=500pt yaw bias instrument file\\
-\hfuzz=500pt\quad\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~inputfileYawRates & \hfuzz=500pt filename & \hfuzz=500pt yaw rate per SVN in [deg/s]\\
-\hfuzz=500pt\quad\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~shadowBuffer & \hfuzz=500pt double & \hfuzz=500pt [seconds] pre/post orbit time period to look for missing shadow entries/exits\\
-\hfuzz=500pt\quad\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~shadowThreshold & \hfuzz=500pt double & \hfuzz=500pt shadow scaling factor for finding exact shadow entry/exit times, between 0 (shadow) and 1 (sun)\\
-\hfuzz=500pt\quad\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~interpolationDegree & \hfuzz=500pt uint & \hfuzz=500pt Polynomial degree for velocity interpolation, must be even!\\
-\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element-mustset.pdf}~glonass & \hfuzz=500pt sequence & \hfuzz=500pt True attitude based on official Galileo attitude law: z towards Earth, y along solar panel axis (adjusted for yaw maneuvers), x roughly towards sun (y cross z)\\
-\hfuzz=500pt\quad\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element-mustset.pdf}~inputfileTransmitterInfo & \hfuzz=500pt filename & \hfuzz=500pt GNSS satellite info file\\
-\hfuzz=500pt\quad\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~shadowBuffer & \hfuzz=500pt double & \hfuzz=500pt [seconds] pre orbit time period to look for last switch to modified attitude law\\
-\hfuzz=500pt\quad\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~shadowThreshold & \hfuzz=500pt double & \hfuzz=500pt shadow scaling factor for finding exact shadow entry/exit times, between 0 (shadow) and 1 (sun)\\
-\hfuzz=500pt\quad\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~interpolationDegree & \hfuzz=500pt uint & \hfuzz=500pt Polynomial degree for velocity interpolation, must be even!\\
-\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element-mustset.pdf}~galileo & \hfuzz=500pt sequence & \hfuzz=500pt True attitude based on official Galileo attitude law: z towards Earth, y along solar panel axis (adjusted for yaw maneuvers), x roughly towards sun (y cross z)\\
-\hfuzz=500pt\quad\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element-mustset.pdf}~inputfileTransmitterInfo & \hfuzz=500pt filename & \hfuzz=500pt GNSS satellite info file\\
-\hfuzz=500pt\quad\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~shadowBuffer & \hfuzz=500pt double & \hfuzz=500pt [seconds] pre orbit time period to look for last switch to modified attitude law\\
-\hfuzz=500pt\quad\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~interpolationDegree & \hfuzz=500pt uint & \hfuzz=500pt Polynomial degree for velocity interpolation, must be even!\\
+\hfuzz=500pt\includegraphics[width=1em]{element-mustset.pdf}~outputfileStarCamera & \hfuzz=500pt filename & \hfuzz=500pt rotation from body frame to CRF\\
+\hfuzz=500pt\includegraphics[width=1em]{element-mustset.pdf}~inputfileOrbit & \hfuzz=500pt filename & \hfuzz=500pt attitude is modeled based on this orbit\\
+\hfuzz=500pt\includegraphics[width=1em]{element.pdf}~inputfileAttitudeInfo & \hfuzz=500pt filename & \hfuzz=500pt attitude modes used by the satellite and respective parameters\\
+\hfuzz=500pt\includegraphics[width=1em]{element.pdf}~interpolationDegree & \hfuzz=500pt uint & \hfuzz=500pt polynomial degree for orbit interpolation\\
+\hfuzz=500pt\includegraphics[width=1em]{element.pdf}~modelingResolution & \hfuzz=500pt double & \hfuzz=500pt [s] resolution for attitude model evaluation\\
 \hfuzz=500pt\includegraphics[width=1em]{element-mustset.pdf}~ephemerides & \hfuzz=500pt \hyperref[ephemeridesType]{ephemerides} & \hfuzz=500pt \\
 \hfuzz=500pt\includegraphics[width=1em]{element-mustset.pdf}~eclipse & \hfuzz=500pt \hyperref[eclipseType]{eclipse} & \hfuzz=500pt model to determine if satellite is in Earth's shadow\\
 \hline
@@ -6458,7 +6753,10 @@ Name & Type & Annotation\\
 \clearpage
 %==================================
 \subsection{GroupPrograms}\label{GroupPrograms}
-Runs programs in a group. The sole purpose is to structure GROOPS config files.
+Runs \config{program}s in a group, which can be used to structure a config file.
+If \config{catchErrors} is enabled and an error occurs, the remaining \config{program}s
+are skipped and execution continues with \config{errorProgram}s, in case any are defined.
+Otherwise an exception is thrown.
 
 
 \keepXColumns
@@ -6467,6 +6765,8 @@ Runs programs in a group. The sole purpose is to structure GROOPS config files.
 Name & Type & Annotation\\
 \hline
 \hfuzz=500pt\includegraphics[width=1em]{element-unbounded.pdf}~program & \hfuzz=500pt programType & \hfuzz=500pt \\
+\hfuzz=500pt\includegraphics[width=1em]{element.pdf}~catchErrors & \hfuzz=500pt sequence & \hfuzz=500pt \\
+\hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element-unbounded.pdf}~errorProgram & \hfuzz=500pt programType & \hfuzz=500pt executed if an error occured\\
 \hline
 \end{tabularx}
 
@@ -6474,7 +6774,8 @@ This program is \reference{parallelized}{general.parallelization}.
 \clearpage
 %==================================
 \subsection{IfPrograms}\label{IfPrograms}
-Runs a list of programs if a \configClass{condition}{conditionType} is met.
+Runs a list of \config{program}s if a \configClass{condition}{conditionType} is met.
+Otherwise \config{elseProgram}s are executed.
 
 
 \keepXColumns
@@ -6483,7 +6784,8 @@ Runs a list of programs if a \configClass{condition}{conditionType} is met.
 Name & Type & Annotation\\
 \hline
 \hfuzz=500pt\includegraphics[width=1em]{element-mustset.pdf}~condition & \hfuzz=500pt \hyperref[conditionType]{condition} & \hfuzz=500pt \\
-\hfuzz=500pt\includegraphics[width=1em]{element-unbounded.pdf}~program & \hfuzz=500pt programType & \hfuzz=500pt \\
+\hfuzz=500pt\includegraphics[width=1em]{element-unbounded.pdf}~program & \hfuzz=500pt programType & \hfuzz=500pt executed if condition evaluates to true\\
+\hfuzz=500pt\includegraphics[width=1em]{element-unbounded.pdf}~elseProgram & \hfuzz=500pt programType & \hfuzz=500pt executed if condition evaluates to false\\
 \hline
 \end{tabularx}
 
@@ -6493,13 +6795,15 @@ This program is \reference{parallelized}{general.parallelization}.
 \subsection{LoopPrograms}\label{LoopPrograms}
 This program runs a list of programs in a \configClass{loop}{loopType}.
 
-If \config{continueAfterError}=\verb|yes| and an error occurs, the remaining programs in the current loop
-are skipped and iteration continues in the next loop. Otherwise an exception is thrown.
-This option is disabled in parallel mode as exceptions cannot be properly caught.
+If \config{continueAfterError}=\verb|yes| and an error occurs, the remaining programs in the current iteration
+are skipped and the loop continues with the next iteration. Otherwise an exception is thrown.
 
-If \config{parallelLoops} is set the loops are distributed to the process nodes, computed in parallel,
-and each program is executed with only one node. Otherwise the loops and programs are executed
-sequentially but programs are using all nodes.
+If this program is excecuted on multpile processing nodes, the iterations can be computed in parallel,
+see \reference{parallelization}{general.parallelization}. The first process serves as load balancer
+and the other processes are assigned to iterations according to \config{processCountPerIteration}.
+For example, running a loop containing three iterations on 13 processes with \config{processCountPerIteration}=\verb|4|,
+runs the three iterations in parallel, with each iteration being assigned four processes.
+With \config{parallelLog}=\verb|yes| all processes write output to screen and the log file.
 
 
 \keepXColumns
@@ -6507,9 +6811,10 @@ sequentially but programs are using all nodes.
 \hline
 Name & Type & Annotation\\
 \hline
-\hfuzz=500pt\includegraphics[width=1em]{element-mustset.pdf}~loop & \hfuzz=500pt \hyperref[loopType]{loop} & \hfuzz=500pt subprograms are called for every loop\\
-\hfuzz=500pt\includegraphics[width=1em]{element.pdf}~continueAfterError & \hfuzz=500pt boolean & \hfuzz=500pt continue with next loop after error, otherwise throw exception\\
-\hfuzz=500pt\includegraphics[width=1em]{element.pdf}~parallelLoops & \hfuzz=500pt boolean & \hfuzz=500pt parallelize loops instead of programs\\
+\hfuzz=500pt\includegraphics[width=1em]{element-mustset.pdf}~loop & \hfuzz=500pt \hyperref[loopType]{loop} & \hfuzz=500pt subprograms are called for every iteration\\
+\hfuzz=500pt\includegraphics[width=1em]{element.pdf}~continueAfterError & \hfuzz=500pt boolean & \hfuzz=500pt continue with next iteration after error, otherwise throw exception\\
+\hfuzz=500pt\includegraphics[width=1em]{element.pdf}~processCountPerIteration & \hfuzz=500pt uint & \hfuzz=500pt 0: use all processes for each iteration\\
+\hfuzz=500pt\includegraphics[width=1em]{element.pdf}~parallelLog & \hfuzz=500pt boolean & \hfuzz=500pt write to screen/log file from all processing nodes in parallelized loops\\
 \hfuzz=500pt\includegraphics[width=1em]{element-unbounded.pdf}~program & \hfuzz=500pt programType & \hfuzz=500pt \\
 \hline
 \end{tabularx}
@@ -6661,7 +6966,7 @@ Name & Type & Annotation\\
 \clearpage
 %==================================
 \subsection{GnssAntex2AntennaDefinition}\label{GnssAntex2AntennaDefinition}
-Converts metadata and antenna definitions from the \href{https://kb.igs.org/hc/en-us/articles/216104678-ANTEX-format-description}{IGS ANTEX format}.
+Converts metadata and antenna definitions from the \href{https://files.igs.org/pub/data/format/antex14.txt}{IGS ANTEX format}.
 to \configFile{transmitterInfo}{gnssStationInfo}, \configFile{antennaDefinition}{gnssAntennaDefinition}, \configFile{svnBlockTable}{stringTable},
 and \configFile{transmitterList}{stringList} files for the respective GNSS and for the list of ground station antennas.
 
@@ -6728,7 +7033,7 @@ Name & Type & Annotation\\
 \clearpage
 %==================================
 \subsection{GnssClock2ClockRinex}\label{GnssClock2ClockRinex}
-Converts GNSS clocks from GROOPS format to \href{ftp://igs.org/pub/data/format/rinex_clock304.txt}{IGS clock RINEX format}.
+Converts GNSS clocks from GROOPS format to \href{https://files.igs.org/pub/data/format/rinex_clock304.txt}{IGS clock RINEX format}.
 Clocks can be provided via \config{satelliteData} and/or \config{stationData}.
 Observed signal types are inferred from \configFile{inputfileSignalBias}{gnssSignalBias}.
 Satellites/stations used as clock references can be provided via \config{referenceClock}.
@@ -6765,7 +7070,7 @@ Name & Type & Annotation\\
 \clearpage
 %==================================
 \subsection{GnssClockRinex2InstrumentClock}\label{GnssClockRinex2InstrumentClock}
-This program converts clocks from the \href{ftp://igs.org/pub/data/format/rinex_clock304.txt}{IGS clock RINEX format},
+This program converts clocks from the \href{https://files.igs.org/pub/data/format/rinex_clock304.txt}{IGS clock RINEX format},
 which contains the clocks of all satellites and stations in a single file,
 into an \file{instrument file (MISCVALUE)}{instrument} for each \config{identifier}
 (satellite and/or station).
@@ -6787,7 +7092,7 @@ Name & Type & Annotation\\
 \clearpage
 %==================================
 \subsection{GnssEop2IgsErp}\label{GnssEop2IgsErp}
-Write GNSS Earth orientation parameters to \href{https://lists.igs.org/pipermail/igsmail/1998/003315.html}{IGS ERP file format}.
+Write GNSS Earth orientation parameters to \href{https://files.igs.org/pub/data/format/erp.txt}{IGS ERP file format}.
 
 Requires polar motion, polar motion rate, dUT1 and LOD parameters in the solution
 vector \configFile{inputfileSolution}{matrix} and their sigmas in \configFile{inputfileSigmax}{matrix}.
@@ -6921,7 +7226,7 @@ Name & Type & Annotation\\
 \clearpage
 %==================================
 \subsection{GnssRinexNavigation2OrbitClock}\label{GnssRinexNavigation2OrbitClock}
-Evaluates orbit and clock parameters from \href{ftp://ftp.igs.org/pub/data/format/rinex304.pdf}{RINEX navigation file} \config{inputfileRinex}
+Evaluates orbit and clock parameters from \href{https://files.igs.org/pub/data/format/rinex305.pdf}{RINEX navigation file} \config{inputfileRinex}
 at epochs given by \configClass{timeSeries}{timeSeriesType} and writes them to \configFile{outputfileOrbit}{instrument} and
 \configFile{outputfileClock}{instrument}, respectively.
 
@@ -6942,7 +7247,7 @@ Name & Type & Annotation\\
 \clearpage
 %==================================
 \subsection{GnssSignalBias2SinexBias}\label{GnssSignalBias2SinexBias}
-Convert \file{GNSS signal biases}{gnssSignalBias} from GROOPS format to \href{ftp://igs.org/pub/data/format/sinex_bias_100.pdf}{IGS SINEX Bias format}.
+Convert \file{GNSS signal biases}{gnssSignalBias} from GROOPS format to \href{https://files.igs.org/pub/data/format/sinex_bias_100.pdf}{IGS SINEX Bias format}.
 Biases can be provided via \config{transmitterBiases} and/or \config{receiverBiases}.
 Phase biases without attribute (e.g. \verb|L1*|) are automatically expanded so each code
 bias has a corresponding phase bias
@@ -7004,7 +7309,7 @@ Name & Type & Annotation\\
 \clearpage
 %==================================
 \subsection{GnssSinexBias2SignalBias}\label{GnssSinexBias2SignalBias}
-Converts GNSS signal biases from \href{ftp://igs.org/pub/data/format/sinex_bias_100.pdf}{IGS SINEX Bias format}
+Converts GNSS signal biases from \href{https://files.igs.org/pub/data/format/sinex_bias_100.pdf}{IGS SINEX Bias format}
 to \file{GnssSignalBias format}{gnssSignalBias}.
 
 Only satellite observable-specific signal biases (OSB) are supported at the moment.
@@ -7029,10 +7334,10 @@ Name & Type & Annotation\\
 \clearpage
 %==================================
 \subsection{GnssStationLog2StationInfo}\label{GnssStationLog2StationInfo}
-Converts \href{ftp://igs.org/pub/station/general/blank.log}{IGS station log format} to \configFile{outputfileStationInfo}{gnssStationInfo}.
+Converts \href{https://files.igs.org/pub/station/general/blank.log}{IGS station log format} to \configFile{outputfileStationInfo}{gnssStationInfo}.
 
 If \configFile{inputfileAntennaDefinition}{gnssAntennaDefinition} is provided, station log data is cross-checked with the given antenna definitions.
-Cross-checking station log data with a \href{http://www.iers.org/IERS/EN/Organization/AnalysisCoordinator/SinexFormat/sinex.html}{SINEX file} is also
+Cross-checking station log data with a \href{https://www.iers.org/IERS/EN/Organization/AnalysisCoordinator/SinexFormat/sinex.html}{SINEX file} is also
 possible by providing \config{inputfileSinex}. Any failed checks result in warnings in the output log.
 
 
@@ -7051,7 +7356,7 @@ Name & Type & Annotation\\
 \clearpage
 %==================================
 \subsection{GnssTroposphere2TropoSinex}\label{GnssTroposphere2TropoSinex}
-Convert GNSS troposphere data from GROOPS format to \href{http://twg.igs.org/documents/sinex_tro_v2.00.pdf}{IGS SINEX TRO} format.
+Convert GNSS troposphere data from GROOPS format to \href{https://files.igs.org/pub/data/format/sinex_tro_v2.00.pdf}{IGS SINEX TRO} format.
 
 Specification of the station list is done via \config{inputfileStationList}.
 \config{inputfileTroposphereData} needs the troposphere data provided from \program{GnssProcessing}.
@@ -8265,7 +8570,7 @@ Name & Type & Annotation\\
 \clearpage
 %==================================
 \subsection{Orbit2Sp3Format}\label{Orbit2Sp3Format}
-Writes orbits to \href{ftp://igs.org/pub/data/format/sp3c.txt}{SP3 format}.
+Writes orbits to \href{https://files.igs.org/pub/data/format/sp3d.pdf}{SP3 format}.
 
 SP3 orbits are usually given in the terrestrial reference frame (TRF), so providing \configClass{earthRotation}{earthRotationType}
 automatically rotates the orbits from the celestial reference frame (CRF) to the TRF.
@@ -8357,11 +8662,11 @@ Name & Type & Annotation\\
 \clearpage
 %==================================
 \subsection{RinexObservation2GnssReceiver}\label{RinexObservation2GnssReceiver}
-Converts \href{ftp://ftp.igs.org/pub/data/format/rinex304.pdf}{RINEX} or
+Converts \href{https://files.igs.org/pub/data/format/rinex305.pdf}{RINEX} or
 \href{http://terras.gsi.go.jp/ja/crx2rnx.html}{Compact RINEX} files to
 \file{GnssReceiver Instrument file}{instrument}.
 
-In case of \href{ftp://igs.org/pub/data/format/rinex211.txt}{RINEX v2.x} observation files
+In case of \href{https://files.igs.org/pub/data/format/rinex211.txt}{RINEX v2.x} observation files
 containing GLONASS satellites, a mapping from PRN
 to frequency number must be provided via \config{inputfileMatrixPrn2FrequencyNumber}
 in the form of a \file{matrix file}{matrix} with columns: GLONASS PRN, mjdStart, mjdEnd, frequencyNumber.
@@ -8565,7 +8870,7 @@ Name & Type & Annotation\\
 \clearpage
 %==================================
 \subsection{SinexMetadata2SatelliteModel}\label{SinexMetadata2SatelliteModel}
-Create \configFile{outputfileSatelliteModel}{satelliteModel} from \href{http://mgex.igs.org/IGS_MGEX_Metadata.php}{IGS SINEX metadata format}.
+Create \configFile{outputfileSatelliteModel}{satelliteModel} from \href{https://www.igs.org/mgex/metadata/#metadata}{IGS SINEX metadata format}.
 
 If \configFile{inputfileSatelliteModel}{satelliteModel} is provided it is used as a basis and values are updated from the metadata file.
 
@@ -8587,7 +8892,7 @@ Name & Type & Annotation\\
 \clearpage
 %==================================
 \subsection{Sp3Format2Orbit}\label{Sp3Format2Orbit}
-Read IGS orbits from \href{ftp://igs.org/pub/data/format/sp3c.txt}{SP3 format}
+Read IGS orbits from \href{https://files.igs.org/pub/data/format/sp3d.pdf}{SP3 format}
 and write an \file{instrument file (ORBIT)}{instrument}.
 The additional \config{outputfileClock} is an \file{instrument file (MISCVALUE)}{instrument}
 and \config{outputfileCovariance} is an \file{instrument file (COVARIANCE3D)}{instrument}.

@@ -84,8 +84,7 @@ ObservationMiscPodIntegral::ObservationMiscPodIntegral(Config &config)
     if(accelerateComputation && keepSatelliteStates)
     {
       accelerateComputation = FALSE;
-      if(Parallel::isMaster())
-        logWarning<<"acceleration of computation is not possible, if keepSatelliteStates is set"<<Log::endl;
+      logWarningOnce<<"acceleration of computation is not possible, if keepSatelliteStates is set"<<Log::endl;
     }
   }
   catch(std::exception &e)
@@ -96,12 +95,13 @@ ObservationMiscPodIntegral::ObservationMiscPodIntegral(Config &config)
 
 /***********************************************/
 
-void ObservationMiscPodIntegral::setInterval(const Time &timeStart, const Time &timeEnd)
+Bool ObservationMiscPodIntegral::setInterval(const Time &timeStart, const Time &timeEnd)
 {
   try
   {
-    parameterGravity->setInterval(timeStart, timeEnd);
-    parameterAcceleration->setInterval(timeStart, timeEnd);
+    Bool change = FALSE;
+    change = parameterGravity->setInterval(timeStart, timeEnd)      || change;
+    change = parameterAcceleration->setInterval(timeStart, timeEnd) || change;
 
     // count parameters
     // ----------------
@@ -113,6 +113,8 @@ void ObservationMiscPodIntegral::setInterval(const Time &timeStart, const Time &
       idxBound = countAParameter;
       countAParameter += 6*countArc; // 2 boundary pos. (x,y,z).
     }
+
+    return change;
   }
   catch(std::exception &e)
   {

@@ -1,4 +1,4 @@
-set(SOURCES ${SOURCES}
+set(SOURCES
 base/constants.cpp
 base/doodson.cpp
 base/ellipsoid.cpp
@@ -129,6 +129,7 @@ classes/normalEquation/normalEquationRegularization.cpp
 classes/normalEquation/normalEquationRegularizationGeneralized.cpp
 classes/observation/observation.cpp
 classes/observation/observationDeflections.cpp
+classes/observation/observationDualSstVariational.cpp
 classes/observation/observationGradiometer.cpp
 classes/observation/observationPodAcceleration.cpp
 classes/observation/observationPodEnergy.cpp
@@ -146,6 +147,7 @@ classes/parametrizationGnssAntenna/parametrizationGnssAntenna.cpp
 classes/parametrizationAcceleration/parametrizationAcceleration.cpp
 classes/parametrizationGravity/parametrizationGravity.cpp
 classes/parametrizationGravity/parametrizationGravityEarthquakeOscillation.cpp
+classes/parametrizationGravity/parametrizationGravityLinearTransformation.cpp
 classes/parametrizationGravity/parametrizationGravityRadialBasis.cpp
 classes/parametrizationGravity/parametrizationGravitySphericalHarmonics.cpp
 classes/parametrizationGravity/parametrizationGravityTemporal.cpp
@@ -198,6 +200,7 @@ misc/observation/covariancePod.cpp
 misc/observation/covarianceSst.cpp
 misc/observation/integralEquation.cpp
 misc/observation/observationMisc.cpp
+misc/observation/observationMiscDualSstVariational.cpp
 misc/observation/observationMiscPod.cpp
 misc/observation/observationMiscPodIntegral.cpp
 misc/observation/observationMiscPodVariational.cpp
@@ -206,8 +209,9 @@ misc/observation/observationMiscSstIntegral.cpp
 misc/observation/observationMiscSstVariational.cpp
 misc/observation/variationalEquation.cpp
 misc/observation/variationalEquationFromFile.cpp
-misc/miscGriddedData.cpp
 misc/kalmanProcessing.cpp
+misc/miscGriddedData.cpp
+misc/normalsShortTimeStaticLongTime.cpp
 misc/varianceComponentEstimation.cpp
 
 plot/plotAxis.cpp
@@ -237,6 +241,7 @@ programs/gnss/gnssAntennaDefinition2ParameterVector.cpp
 programs/gnss/gnssAntennaDefinition2Skyplot.cpp
 programs/gnss/gnssAntennaDefinitionCreate.cpp
 programs/gnss/gnssAntennaNormalsConstraint.cpp
+programs/gnss/gnssAttitudeInfoCreate.cpp
 programs/gnss/gnssBiasClockAlignment.cpp
 programs/gnss/gnssEstimateClockShift.cpp
 programs/gnss/gnssGlonassFrequencyNumberUpdate.cpp
@@ -333,7 +338,6 @@ programs/kalmanFilter/kalmanBuildNormals.cpp
 programs/kalmanFilter/kalmanFilter.cpp
 programs/kalmanFilter/kalmanSmoother.cpp
 programs/kalmanFilter/kalmanSmootherLeastSquares.cpp
-programs/kalmanFilter/kalmanStaticTemporalNormals.cpp
 programs/misc/digitalFilter2FrequencyResponse.cpp
 programs/misc/digitalFilter2ImpulseResponse.cpp
 programs/misc/earthOrientationParameterTimeSeries.cpp
@@ -357,6 +361,7 @@ programs/misc/timeSeriesCreate.cpp
 programs/misc/variational2Orbit.cpp
 programs/normals/normalsAccumulate.cpp
 programs/normals/normalsBuild.cpp
+programs/normals/normalsBuildShortTimeStaticLongTime.cpp
 programs/normals/normalsCreate.cpp
 programs/normals/normalsEliminate.cpp
 programs/normals/normalsMultiplyAdd.cpp
@@ -381,6 +386,7 @@ programs/plot/plotGraph.cpp
 programs/plot/plotMap.cpp
 programs/plot/plotMatrix.cpp
 programs/plot/plotSphericalHarmonicsTriangle.cpp
+programs/preprocessing/preprocessingDualSst.cpp
 programs/preprocessing/preprocessingGradiometer.cpp
 programs/preprocessing/preprocessingPod.cpp
 programs/preprocessing/preprocessingSst.cpp

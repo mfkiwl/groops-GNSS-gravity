@@ -39,7 +39,7 @@ ObservationMiscSstVariational::ObservationMiscSstVariational(Config &config)
 
     if(readConfigSequence(config, "rightHandSide", Config::MUSTSET, "", "input for observation vectors"))
     {
-      readConfig(config, "inputfileSatelliteTracking", fileNameSst,  Config::OPTIONAL, "", "ranging observations and corrections");
+      readConfig(config, "inputfileSatelliteTracking", fileNameSst,  Config::MUSTSET,  "", "ranging observations and corrections");
       readConfig(config, "inputfileOrbit1",            fileNamePod1, Config::OPTIONAL, "", "kinematic positions of satellite A as observations");
       readConfig(config, "inputfileOrbit2",            fileNamePod2, Config::OPTIONAL, "", "kinematic positions of satellite B as observations");
       endSequence(config);
@@ -107,13 +107,17 @@ ObservationMiscSstVariational::ObservationMiscSstVariational(Config &config)
 
 /***********************************************/
 
-void ObservationMiscSstVariational::setInterval(const Time &timeStart, const Time &timeEnd)
+Bool ObservationMiscSstVariational::setInterval(const Time &timeStart, const Time &timeEnd)
 {
   try
   {
-    parameterGravity->setInterval(timeStart, timeEnd);
-    parameterAcceleration1->setInterval(timeStart, timeEnd);
-    parameterAcceleration2->setInterval(timeStart, timeEnd);
+    Bool change = FALSE;
+    change = parameterGravity->setInterval(timeStart, timeEnd)       || change;
+    change = parameterAcceleration1->setInterval(timeStart, timeEnd) || change;
+    change = parameterAcceleration2->setInterval(timeStart, timeEnd) || change;
+    change = parameterSst->setInterval(timeStart, timeEnd)           || change;
+    if(!change)
+      return FALSE;
     variationalEquation1.computeIndices();
     variationalEquation2.computeIndices();
 
@@ -128,6 +132,8 @@ void ObservationMiscSstVariational::setInterval(const Time &timeStart, const Tim
     idxState1   = countAParameter; countAParameter += state1Count;
     idxState2   = countAParameter; countAParameter += state2Count;
     idxSstPara  = countAParameter; countAParameter += parameterSst->parameterCount();
+
+    return change;
   }
   catch(std::exception &e)
   {
