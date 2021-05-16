@@ -2442,7 +2442,7 @@ See also \program{FunctionsCalculate}, \program{InstrumentArcCalculate}, \progra
 \hline
 Name & Type & Annotation\\
 \hline
-\hfuzz=500pt\includegraphics[width=1em]{element-mustset.pdf}~outputfileGriddedData & \hfuzz=500pt filename & \hfuzz=500pt \\
+\hfuzz=500pt\includegraphics[width=1em]{element.pdf}~outputfileGriddedData & \hfuzz=500pt filename & \hfuzz=500pt \\
 \hfuzz=500pt\includegraphics[width=1em]{element-mustset-unbounded.pdf}~inputfileGriddedData & \hfuzz=500pt filename & \hfuzz=500pt \\
 \hfuzz=500pt\includegraphics[width=1em]{element-unbounded.pdf}~constant & \hfuzz=500pt expression & \hfuzz=500pt define a constant by name=value\\
 \hfuzz=500pt\includegraphics[width=1em]{element-unbounded.pdf}~parameter & \hfuzz=500pt expression & \hfuzz=500pt define a parameter by name[=value]\\
@@ -3045,6 +3045,34 @@ Name & Type & Annotation\\
 \hfuzz=500pt\includegraphics[width=1em]{element-mustset.pdf}~windowLength & \hfuzz=500pt double & \hfuzz=500pt [seconds]\\
 \hfuzz=500pt\includegraphics[width=1em]{element.pdf}~startDataFields & \hfuzz=500pt uint & \hfuzz=500pt start\\
 \hfuzz=500pt\includegraphics[width=1em]{element.pdf}~countDataFields & \hfuzz=500pt uint & \hfuzz=500pt number of data fields (default: all)\\
+\hline
+\end{tabularx}
+
+This program is \reference{parallelized}{general.parallelization}.
+\clearpage
+%==================================
+\subsection{InstrumentAccelerometer2ThermosphericDensity}\label{InstrumentAccelerometer2ThermosphericDensity}
+This programm estimates neutral mass densities along the satellite trajectory based on \file{accelerometer data}{instrument}.
+In order to determine the neutral mass density the accelerometer input should only reflect the accelerations due to drag
+(e.g. \configClass{miscAccelerations:atmosphericDrag}{miscAccelerationsType:atmosphericDrag}).
+Thus, influences from solar and Earth radiation pressure must be reduced beforehand.
+
+
+\keepXColumns
+\begin{tabularx}{\textwidth}{N T A}
+\hline
+Name & Type & Annotation\\
+\hline
+\hfuzz=500pt\includegraphics[width=1em]{element-mustset.pdf}~outputfileDensity & \hfuzz=500pt filename & \hfuzz=500pt \\
+\hfuzz=500pt\includegraphics[width=1em]{element.pdf}~satelliteModel & \hfuzz=500pt filename & \hfuzz=500pt satellite macro model\\
+\hfuzz=500pt\includegraphics[width=1em]{element-mustset.pdf}~inputfileOrbit & \hfuzz=500pt filename & \hfuzz=500pt \\
+\hfuzz=500pt\includegraphics[width=1em]{element-mustset.pdf}~inputfileStarCamera & \hfuzz=500pt filename & \hfuzz=500pt \\
+\hfuzz=500pt\includegraphics[width=1em]{element-mustset.pdf}~inputfileAccelerometer & \hfuzz=500pt filename & \hfuzz=500pt add non-gravitational forces in satellite reference frame\\
+\hfuzz=500pt\includegraphics[width=1em]{element-mustset.pdf}~thermosphere & \hfuzz=500pt \hyperref[thermosphereType]{thermosphere} & \hfuzz=500pt \\
+\hfuzz=500pt\includegraphics[width=1em]{element.pdf}~considerTemperature & \hfuzz=500pt boolean & \hfuzz=500pt compute drag and lift, otherwise simple drag coefficient is used\\
+\hfuzz=500pt\includegraphics[width=1em]{element.pdf}~considerWind & \hfuzz=500pt boolean & \hfuzz=500pt \\
+\hfuzz=500pt\includegraphics[width=1em]{element-mustset.pdf}~earthRotation & \hfuzz=500pt \hyperref[earthRotationType]{earthRotation} & \hfuzz=500pt \\
+\hfuzz=500pt\includegraphics[width=1em]{element.pdf}~ephemerides & \hfuzz=500pt \hyperref[ephemeridesType]{ephemerides} & \hfuzz=500pt \\
 \hline
 \end{tabularx}
 
@@ -4266,7 +4294,7 @@ See also \program{InstrumentArcCalculate}, \program{GriddedDataCalculate}, \prog
 \hline
 Name & Type & Annotation\\
 \hline
-\hfuzz=500pt\includegraphics[width=1em]{element-mustset.pdf}~outputfile & \hfuzz=500pt filename & \hfuzz=500pt \\
+\hfuzz=500pt\includegraphics[width=1em]{element.pdf}~outputfile & \hfuzz=500pt filename & \hfuzz=500pt \\
 \hfuzz=500pt\includegraphics[width=1em]{element-mustset-unbounded.pdf}~inputfile & \hfuzz=500pt filename & \hfuzz=500pt \\
 \hfuzz=500pt\includegraphics[width=1em]{element-unbounded.pdf}~constant & \hfuzz=500pt expression & \hfuzz=500pt define a constant by name=value\\
 \hfuzz=500pt\includegraphics[width=1em]{element-unbounded.pdf}~parameter & \hfuzz=500pt expression & \hfuzz=500pt define a parameter by name[=value]\\
@@ -4284,7 +4312,10 @@ Name & Type & Annotation\\
 \subsection{Grs2PotentialCoefficients}\label{Grs2PotentialCoefficients}
 This program creates potential coefficients from the defining constants
 of a Geodetic Reference System (GRS). The potential coeffiencts excludes the centrifugal part.
-The default values creates the GRS80.
+The form of the reference ellipsoid is either determined by the dynamical form factor \config{J2},
+or the geometric \config{inverseFlattening}. One of those form parameters must be specified.
+
+The default values create the GRS80.
 
 
 \keepXColumns
@@ -4296,8 +4327,9 @@ Name & Type & Annotation\\
 \hfuzz=500pt\includegraphics[width=1em]{element-mustset.pdf}~maxDegree & \hfuzz=500pt uint & \hfuzz=500pt \\
 \hfuzz=500pt\includegraphics[width=1em]{element.pdf}~GM & \hfuzz=500pt double & \hfuzz=500pt Geocentric gravitational constant\\
 \hfuzz=500pt\includegraphics[width=1em]{element.pdf}~R & \hfuzz=500pt double & \hfuzz=500pt reference radius\\
-\hfuzz=500pt\includegraphics[width=1em]{element.pdf}~J2 & \hfuzz=500pt double & \hfuzz=500pt Dynamical form factor\\
 \hfuzz=500pt\includegraphics[width=1em]{element.pdf}~omega & \hfuzz=500pt double & \hfuzz=500pt Angular velocity of rotation\\
+\hfuzz=500pt\includegraphics[width=1em]{element.pdf}~J2 & \hfuzz=500pt double & \hfuzz=500pt Dynamical form factor\\
+\hfuzz=500pt\includegraphics[width=1em]{element.pdf}~inverseFlattening & \hfuzz=500pt double & \hfuzz=500pt Geometric inverse flattening of reference ellipsoid (0: sphere, ignored when J2 is set)\\
 \hline
 \end{tabularx}
 
@@ -6981,18 +7013,22 @@ Name & Type & Annotation\\
 \hfuzz=500pt\includegraphics[width=1em]{element.pdf}~outputfileAntennaDefinitionGlonass & \hfuzz=500pt filename & \hfuzz=500pt antenna center variations\\
 \hfuzz=500pt\includegraphics[width=1em]{element.pdf}~outputfileAntennaDefinitionGalileo & \hfuzz=500pt filename & \hfuzz=500pt antenna center variations\\
 \hfuzz=500pt\includegraphics[width=1em]{element.pdf}~outputfileAntennaDefinitionBeiDou & \hfuzz=500pt filename & \hfuzz=500pt antenna center variations\\
+\hfuzz=500pt\includegraphics[width=1em]{element.pdf}~outputfileAntennaDefinitionQzss & \hfuzz=500pt filename & \hfuzz=500pt antenna center variations\\
 \hfuzz=500pt\includegraphics[width=1em]{element.pdf}~outputfileTransmitterInfoGps & \hfuzz=500pt filename & \hfuzz=500pt PRN is appended to file name\\
 \hfuzz=500pt\includegraphics[width=1em]{element.pdf}~outputfileTransmitterInfoGlonass & \hfuzz=500pt filename & \hfuzz=500pt PRN is appended to file name\\
 \hfuzz=500pt\includegraphics[width=1em]{element.pdf}~outputfileTransmitterInfoGalileo & \hfuzz=500pt filename & \hfuzz=500pt PRN is appended to file name\\
 \hfuzz=500pt\includegraphics[width=1em]{element.pdf}~outputfileTransmitterInfoBeiDou & \hfuzz=500pt filename & \hfuzz=500pt PRN is appended to file name\\
+\hfuzz=500pt\includegraphics[width=1em]{element.pdf}~outputfileTransmitterInfoQzss & \hfuzz=500pt filename & \hfuzz=500pt PRN is appended to file name\\
 \hfuzz=500pt\includegraphics[width=1em]{element.pdf}~outputfileSvnBlockTableGps & \hfuzz=500pt filename & \hfuzz=500pt SVN to satellite block mapping\\
 \hfuzz=500pt\includegraphics[width=1em]{element.pdf}~outputfileSvnBlockTableGlonass & \hfuzz=500pt filename & \hfuzz=500pt SVN to satellite block mapping\\
 \hfuzz=500pt\includegraphics[width=1em]{element.pdf}~outputfileSvnBlockTableGalileo & \hfuzz=500pt filename & \hfuzz=500pt SVN to satellite block mapping\\
 \hfuzz=500pt\includegraphics[width=1em]{element.pdf}~outputfileSvnBlockTableBeiDou & \hfuzz=500pt filename & \hfuzz=500pt SVN to satellite block mapping\\
+\hfuzz=500pt\includegraphics[width=1em]{element.pdf}~outputfileSvnBlockTableQzss & \hfuzz=500pt filename & \hfuzz=500pt SVN to satellite block mapping\\
 \hfuzz=500pt\includegraphics[width=1em]{element.pdf}~outputfileTransmitterListGps & \hfuzz=500pt filename & \hfuzz=500pt list of PRNs\\
 \hfuzz=500pt\includegraphics[width=1em]{element.pdf}~outputfileTransmitterListGlonass & \hfuzz=500pt filename & \hfuzz=500pt list of PRNs\\
 \hfuzz=500pt\includegraphics[width=1em]{element.pdf}~outputfileTransmitterListGalileo & \hfuzz=500pt filename & \hfuzz=500pt list of PRNs\\
 \hfuzz=500pt\includegraphics[width=1em]{element.pdf}~outputfileTransmitterListBeiDou & \hfuzz=500pt filename & \hfuzz=500pt list of PRNs\\
+\hfuzz=500pt\includegraphics[width=1em]{element.pdf}~outputfileTransmitterListQzss & \hfuzz=500pt filename & \hfuzz=500pt list of PRNs\\
 \hfuzz=500pt\includegraphics[width=1em]{element-mustset.pdf}~inputfileAntex & \hfuzz=500pt filename & \hfuzz=500pt \\
 \hfuzz=500pt\includegraphics[width=1em]{element.pdf}~timeStart & \hfuzz=500pt time & \hfuzz=500pt ignore older antenna definitions\\
 \hfuzz=500pt\includegraphics[width=1em]{element.pdf}~createZeroModel & \hfuzz=500pt boolean & \hfuzz=500pt create empty antenna patterns\\
@@ -7113,30 +7149,6 @@ Name & Type & Annotation\\
 \hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~inputfileStationList & \hfuzz=500pt filename & \hfuzz=500pt stations used in solution (used for station count)\\
 \hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element-mustset.pdf}~time & \hfuzz=500pt time & \hfuzz=500pt reference time for epoch\\
 \hfuzz=500pt\includegraphics[width=1em]{element-unbounded.pdf}~comment & \hfuzz=500pt string & \hfuzz=500pt \\
-\hline
-\end{tabularx}
-
-\clearpage
-%==================================
-\subsection{GnssNanu2Matrix}\label{GnssNanu2Matrix}
-Convert NANU (Notice Advisory to NAVSTAR users) files to outage Matrix files per GPS PRN and day.
-
-NANU file source: \url{https://celestrak.com/GPS/NANU/}
-
-Extracts satellite outage information from \config{inputfileNanu} and writes a matrix
-file \configFile{outputfileMatrix}{matrix} for each PRN and each day. Each line represents an outage,
-with start time in the first column and end time in the second column of the matrix.
-
-
-\keepXColumns
-\begin{tabularx}{\textwidth}{N T A}
-\hline
-Name & Type & Annotation\\
-\hline
-\hfuzz=500pt\includegraphics[width=1em]{element-mustset.pdf}~outputfileMatrix & \hfuzz=500pt filename & \hfuzz=500pt PRN is appended to file name\\
-\hfuzz=500pt\includegraphics[width=1em]{element-mustset-unbounded.pdf}~inputfileNanu & \hfuzz=500pt filename & \hfuzz=500pt NANU file\\
-\hfuzz=500pt\includegraphics[width=1em]{element-mustset-unbounded.pdf}~intervals & \hfuzz=500pt \hyperref[timeSeriesType]{timeSeries} & \hfuzz=500pt for \{loopTime\} variable in outputfile\\
-\hfuzz=500pt\includegraphics[width=1em]{element.pdf}~initiallyUnusable & \hfuzz=500pt boolean & \hfuzz=500pt set time periods before initial interval to unusable\\
 \hline
 \end{tabularx}
 
@@ -7415,31 +7427,6 @@ Name & Type & Annotation\\
 \hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element-mustset.pdf}~versionNumber & \hfuzz=500pt string & \hfuzz=500pt Unique identifier of the product, same as in file name, e.g. 000\\
 \hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element.pdf}~inputfileComment & \hfuzz=500pt filename & \hfuzz=500pt comments in the comment block from a file (truncated at 80 characters per line)\\
 \hfuzz=500pt\includegraphics[width=1em]{connector.pdf}\includegraphics[width=1em]{element-unbounded.pdf}~comment & \hfuzz=500pt string & \hfuzz=500pt comments in the comment block\\
-\hline
-\end{tabularx}
-
-\clearpage
-%==================================
-\subsection{GnssYawBias2Instrument}\label{GnssYawBias2Instrument}
-Convert yaw bias table from JPL to instrument files per GPS PRN.
-
-Yaw bias file source: \url{https://sideshow.jpl.nasa.gov/pub/gipsy_files/gipsy_params//yaw_bias_table.gz}
-
-Extracts yaw bias from \config{inputfileYawBias} based on PRN-SVN association in \configFile{inputfiletransmitterInfo}{gnssStationInfo}
-and writes an \configFile{outputfileInstrument}{instrument} (MISCVALUE) for the PRN containing the biases.
-
-SVN 23 -3.5 deg yaw bias is changed to -0.5 deg.
-Block IIF yaw bias is changed from -0.5 deg to -0.7 deg according to Kouba 2017 eclipse update manuscript.
-
-
-\keepXColumns
-\begin{tabularx}{\textwidth}{N T A}
-\hline
-Name & Type & Annotation\\
-\hline
-\hfuzz=500pt\includegraphics[width=1em]{element-mustset.pdf}~outputfileInstrument & \hfuzz=500pt filename & \hfuzz=500pt yaw bias instrument file\\
-\hfuzz=500pt\includegraphics[width=1em]{element-mustset.pdf}~inputfileYawBias & \hfuzz=500pt filename & \hfuzz=500pt JPL yaw bias table\\
-\hfuzz=500pt\includegraphics[width=1em]{element-mustset.pdf}~inputfileTransmitterInfo & \hfuzz=500pt filename & \hfuzz=500pt GNSS transmitter info file\\
 \hline
 \end{tabularx}
 

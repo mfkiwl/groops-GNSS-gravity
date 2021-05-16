@@ -40,6 +40,7 @@
 #include "gnss/gnssParametrizationTransmitterGlonass.h"
 #include "gnss/gnssParametrizationTransmitterGalileo.h"
 #include "gnss/gnssParametrizationTransmitterBeidou.h"
+#include "gnss/gnssParametrizationTransmitterQzss.h"
 #include "gnss/gnssParametrizationTransmitter.h"
 
 /***********************************************/
@@ -48,7 +49,8 @@ GROOPS_REGISTER_CLASS(GnssParametrizationTransmitter, "gnssParametrizationTransm
                       GnssParametrizationTransmitterGps,
                       GnssParametrizationTransmitterGlonass,
                       GnssParametrizationTransmitterGalileo,
-                      GnssParametrizationTransmitterBeidou)
+                      GnssParametrizationTransmitterBeidou,
+                      GnssParametrizationTransmitterQzss)
 
 GROOPS_RENAMED_CLASS(gnssTransmitterConstellationType, gnssParametrizationTransmitterType, date2time(2020, 6, 12))
 
@@ -71,6 +73,8 @@ GnssParametrizationTransmitterPtr GnssParametrizationTransmitter::create(Config 
       system = GnssParametrizationTransmitterPtr(new GnssParametrizationTransmitterGalileo(config));
     if(readConfigChoiceElement(config, "BeiDou", type, ""))
       system = GnssParametrizationTransmitterPtr(new GnssParametrizationTransmitterBeidou(config));
+    if(readConfigChoiceElement(config, "QZSS", type, ""))
+      system = GnssParametrizationTransmitterPtr(new GnssParametrizationTransmitterQzss(config));
     endChoice(config);
     return system;
   }
@@ -976,7 +980,7 @@ void GnssParametrizationTransmitter::observationEquation(const Gnss::NormalEquat
 
         // transmitter clocks
         const UInt countClockTrans = (normalEquationInfo.estimationType & Gnss::NormalEquationInfo::ESTIMATE_TRANSMITTER_CLOCK) ? countTrans : 0;
-        const UInt idxClockTrans   = idxBiasRecv.back() + countClockRecv;
+        const UInt idxClockTrans   = idxClockRecv + countClockRecv;
 
         // accumulate normal equations
         Matrix N11(idxBiasRecv.back() + countClockRecv + countClockTrans, Matrix::SYMMETRIC); // receiver biases and receiver/transmitter clocks
@@ -1042,7 +1046,7 @@ void GnssParametrizationTransmitter::observationEquation(const Gnss::NormalEquat
             idxTrans++;
           }
         // zero mean of transmitter clocks
-        rankKUpdate(1, Vector(countClockTrans, 1.).trans(), N11.slice(idxBiasRecv.back(), idxBiasRecv.back(), countClockTrans, countClockTrans));
+        rankKUpdate(1, Vector(countClockTrans, 1.).trans(), N11.slice(idxClockTrans, idxClockTrans, countClockTrans, countClockTrans));
 
         // eliminate bias and clock parameters (with pseudo inverse)
         {
