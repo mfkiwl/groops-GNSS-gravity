@@ -604,7 +604,7 @@ void GnssReceiver::simulateObservations(NoiseGeneratorPtr noiseClock, NoiseGener
     generator.seed(randomDevice());
     auto ambiguityRandom = std::uniform_int_distribution<Int>(-10000, 10000);
 
-    createTracks(transmitters, minObsCountPerTrack, {});
+    createTracks(transmitters, minObsCountPerTrack);
     for(auto &track : tracks)
     {
       Vector value(track->types.size());
@@ -859,7 +859,7 @@ void GnssReceiver::disableEpochsWithGrossCodeObservationOutliers(ObservationEqua
 
 /***********************************************/
 
-void GnssReceiver::createTracks(const std::vector<GnssTransmitterPtr> &transmitters, UInt minObsCountPerTrack, const std::vector<GnssType> &extraTypes)
+void GnssReceiver::createTracks(const std::vector<GnssTransmitterPtr> &transmitters, UInt minObsCountPerTrack)
 {
   try
   {
@@ -910,10 +910,10 @@ void GnssReceiver::createTracks(const std::vector<GnssTransmitterPtr> &transmitt
           }
         } // for(idEpoch)
 
-        // need phases at two frequencies (additional to extraTypes)
+        // need phases at two frequencies
         std::vector<GnssType> typeFrequencies;
         for(GnssType type : types)
-          if((type == GnssType::PHASE) && !type.isInList(extraTypes) && !type.isInList(typeFrequencies))
+          if((type == GnssType::PHASE) && !type.isInList(typeFrequencies))
             typeFrequencies.push_back(type & GnssType::FREQUENCY);
 
         // define track
@@ -1047,6 +1047,33 @@ GnssTrackPtr GnssReceiver::splitTrack(ObservationEquationList &eqnList, GnssTrac
 
 /***********************************************/
 
+// List of phase types that require special handling.
+std::vector<GnssType> GnssReceiver::getExtraTypes(const ObservationEquationList &eqnList, GnssTrackPtr track) const
+{
+  try
+  {
+    std::vector<GnssType> extraTypes;
+
+    // L5 of BLOCK IIF has temporal changing bias.
+    if((track->types.size() > 2) && GnssType::L5_G.isInList(track->types))
+    {
+      const UInt idTrans      = track->transmitter->idTrans();
+      const UInt idEpochStart = track->idEpochStart;
+      auto antenna = track->transmitter->platform.findEquipment<PlatformGnssAntenna>(eqnList(idTrans, idEpochStart)->timeTrans);
+      if(antenna && (antenna->name == "BLOCK IIF"))
+        extraTypes.push_back(GnssType::L5_G);
+    }
+
+    return extraTypes;
+  }
+  catch(std::exception &e)
+  {
+    GROOPS_RETHROW(e)
+  }
+}
+
+/***********************************************/
+
 // determine Melbourne-Wuebbena-like linear combinations
 void GnssReceiver::linearCombinations(ObservationEquationList &eqnList, GnssTrackPtr track, const std::vector<GnssType> &extraTypes,
                                       std::vector<GnssType> &typesPhase, std::vector<UInt> &idEpochs, Matrix &combinations, Double &cycles2tecu) const
@@ -1164,7 +1191,7 @@ static Double computeBias(const Vector &data, Double maxRange)
 
 /***********************************************/
 
-void GnssReceiver::writeTracks(const FileName &fileName, ObservationEquationList &eqnList, const std::vector<GnssType> &extraTypes) const
+void GnssReceiver::writeTracks(const FileName &fileName, ObservationEquationList &eqnList) const
 {
   try
   {
@@ -1174,6 +1201,8 @@ void GnssReceiver::writeTracks(const FileName &fileName, ObservationEquationList
     for(const auto &track : tracks)
       if(track->countObservations())
       {
+        std::vector<GnssType> extraTypes = getExtraTypes(eqnList, track);
+
         std::vector<GnssType> typesPhase;
         std::vector<UInt>     idEpochs;
         Matrix                combinations;
@@ -1213,14 +1242,14 @@ void GnssReceiver::writeTracks(const FileName &fileName, ObservationEquationList
 
 /***********************************************/
 
-void GnssReceiver::cycleSlipsDetection(ObservationEquationList &eqnList, UInt minObsCountPerTrack, Double lambda, UInt windowSize, Double tecSigmaFactor, const std::vector<GnssType> &extraTypes)
+void GnssReceiver::cycleSlipsDetection(ObservationEquationList &eqnList, UInt minObsCountPerTrack, Double lambda, UInt windowSize, Double tecSigmaFactor)
 {
   try
   {
     for(UInt idTrack=0; idTrack<tracks.size(); idTrack++)
     {
       if(tracks.at(idTrack)->countObservations() >= std::max(minObsCountPerTrack, windowSize))
-        cycleSlipsDetection(eqnList, tracks.at(idTrack), lambda, windowSize, tecSigmaFactor, extraTypes);
+        cycleSlipsDetection(eqnList, tracks.at(idTrack), lambda, windowSize, tecSigmaFactor);
       if(tracks.at(idTrack)->countObservations() < minObsCountPerTrack)
         deleteTrack(idTrack--);
     }
@@ -1235,10 +1264,12 @@ void GnssReceiver::cycleSlipsDetection(ObservationEquationList &eqnList, UInt mi
 
 /***********************************************/
 
-void GnssReceiver::cycleSlipsDetection(ObservationEquationList &eqnList, GnssTrackPtr track, Double lambda, UInt windowSize, Double tecSigmaFactor, const std::vector<GnssType> &extraTypes)
+void GnssReceiver::cycleSlipsDetection(ObservationEquationList &eqnList, GnssTrackPtr track, Double lambda, UInt windowSize, Double tecSigmaFactor)
 {
   try
   {
+    std::vector<GnssType> extraTypes = getExtraTypes(eqnList, track);
+
     // determine Melbourne-Wuebbena-like linear combinations
     // -----------------------------------------------------
     std::vector<GnssType> typesPhase;
@@ -1509,7 +1540,7 @@ void GnssReceiver::cycleSlipsRepairAtSameFrequency(ObservationEquationList &eqnL
 
 /***********************************************/
 
-void GnssReceiver::trackOutlierDetection(const ObservationEquationList &eqnList, const std::vector<GnssType> &ignoreTypes, Double huber, Double huberPower)
+void GnssReceiver::trackOutlierDetection(const ObservationEquationList &eqnList, Double huber, Double huberPower)
 {
   try
   {
@@ -1573,6 +1604,7 @@ void GnssReceiver::trackOutlierDetection(const ObservationEquationList &eqnList,
           }
 
           // downweight ignored types
+          std::vector<GnssType> ignoreTypes = getExtraTypes(eqnList, track);
           for(UInt idType=0; idType<eqn.types.size(); idType++)
             if(eqn.types.at(idType).isInList(ignoreTypes))
             {
