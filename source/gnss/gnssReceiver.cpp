@@ -320,31 +320,25 @@ void GnssReceiver::readObservations(const FileName &fileName, const std::vector<
     std::map<GnssType, UInt> removedTypes;
 
     UInt idEpoch = 0;
-    for(UInt arcEpoch=0; arcEpoch<arc.size(); arcEpoch++)
+    for(const auto &epoch : arc)
     {
       // search time slot
-      while((idEpoch < times.size()) && (times.at(idEpoch)+timeMargin < arc.at(arcEpoch).time))
+      while((idEpoch < times.size()) && (times.at(idEpoch)+timeMargin < epoch.time))
         disable(idEpoch++, "missing epochs in file");
       if(idEpoch >= times.size())
         break;
-      if((arc.at(arcEpoch).time+timeMargin < times.at(idEpoch)) || !useable(idEpoch))
+      if((epoch.time+timeMargin < times.at(idEpoch)) || !useable(idEpoch))
         continue;
-      times.at(idEpoch) = arc.at(arcEpoch).time;
-//    clk.at(idEpoch)   = arc.at(arcEpoch).clockError;
-      observationTimes.push_back(arc.at(arcEpoch).time);
+      times.at(idEpoch) = epoch.time;
+//    clk.at(idEpoch)   = epoch.clockError;
+      observationTimes.push_back(epoch.time);
 
       const std::vector<GnssType> receiverTypes = definedTypes(times.at(idEpoch));
 
       // create observation class for each satellite
       UInt idObs  = 0;
-      for(UInt k=0; k<arc.at(arcEpoch).satellite.size(); k++)
+      for(GnssType satType : epoch.satellite)
       {
-        // find list of observation types for this satellite
-        GnssType satType = arc.at(arcEpoch).satellite.at(k);
-        UInt idType = 0;
-        while(arc.at(arcEpoch).obsType.at(idType) != satType)
-          idType++;
-
         // search transmitter index for satellite number (PRN)
         const UInt idTrans = std::distance(transmitters.begin(), std::find_if(transmitters.begin(), transmitters.end(),
                                                                               [&](auto t) {return t->PRN() == satType;}));
@@ -357,10 +351,11 @@ void GnssReceiver::readObservations(const FileName &fileName, const std::vector<
           satType.setFrequencyNumber(transmitterTypes.front().frequencyNumber());
 
         GnssObservation *obs = new GnssObservation();
-        for(; (idType<arc.at(arcEpoch).obsType.size()) && (arc.at(arcEpoch).obsType.at(idType)==satType); idType++, idObs++)
-          if((idTrans < transmitters.size()) && arc.at(arcEpoch).observation.at(idObs)  && !std::isnan(arc.at(arcEpoch).observation.at(idObs)))
+        UInt idType = std::distance(epoch.obsType.begin(), std::find(epoch.obsType.begin(), epoch.obsType.end(), satType));
+        for(; (idType<epoch.obsType.size()) && (epoch.obsType.at(idType)==satType); idType++, idObs++)
+          if((idTrans < transmitters.size()) && epoch.observation.at(idObs)  && !std::isnan(epoch.observation.at(idObs)))
           {
-            GnssType type = arc.at(arcEpoch).obsType.at(idType) + satType;
+            GnssType type = epoch.obsType.at(idType) + satType;
             // remove GLONASS frequency number
             if((type == GnssType::GLONASS) && !((type == GnssType::G1) || (type == GnssType::G2)))
               type.setFrequencyNumber(9999);
@@ -404,7 +399,7 @@ void GnssReceiver::readObservations(const FileName &fileName, const std::vector<
                 }
 
             if(use)
-              obs->push_back(GnssSingleObservation(type, arc.at(arcEpoch).observation.at(idObs)));
+              obs->push_back(GnssSingleObservation(type, epoch.observation.at(idObs)));
           }
 
         std::vector<GnssType> types;
@@ -1280,6 +1275,7 @@ void GnssReceiver::cycleSlipsDetection(ObservationEquationList &eqnList, GnssTra
       // Code mostly from books such as TimeSeriesAnalysis by James Hamilton,
       // Introduction to TimeSeries and Forecasting by brockwell and Davis,
       // and statsmodels implementaiton which seems to be the easiest way todo imo by using burg->lev
+      // Burg recursion adapted from statsmodels' pacf_burg implementation.
 
       // Compute first diff and convert to cycles
       // First diff is used to get rid of any additional issues within the tec
